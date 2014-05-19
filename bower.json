@@ -1,0 +1,30 @@
+{
+  "name": "stapes-ui",
+  "version": "0.0.1",
+  "authors": [
+    "Marco Solazzi <marco.solazzi@gmail.com>"
+  ],
+  "description": "Stapes.js Widget Framework",
+  "main": "dist/stapes-ui.js",
+  "moduleType": [
+    "amd",
+    "globals"
+  ],
+  "keywords": [
+    "stapes",
+    "ui",
+    "widget"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "stapes": "~0.8.1",
+    "jasmine-jquery": "~2.0.3"
+  }
+}
