@@ -9,7 +9,7 @@
 
 var _regxpKey = /([a-z]+)\s?:/ig,
 	_regxpValue = /\'/g,
-	_regxpWid = /\-+/;
+	_regxpMid = /\-+/;
 
 _Ui.Sandbox = Stapes.subclass({
 
@@ -27,38 +27,38 @@ _Ui.Sandbox = Stapes.subclass({
 		return this;
 	},
 
-	_registerWidget: function (id, widgetFn) {
-		var wid = id.replace(_regxpWid, '');
-		var wConfig = {
+	_registerModule: function (id, moduleFn) {
+		var mid = id.replace(_regxpMid, '');
+		var mConfig = {
 			active: false
 		};
-		if ($.isFunction(widgetFn)) {
-			$.extend(wConfig, {
+		if ($.isFunction(moduleFn)) {
+			$.extend(mConfig, {
 				selector: '.' + id,
-				callback: widgetFn
+				callback: moduleFn
 			});
-		} else if ($.isPlainObject(widgetFn)) {
-			$.extend(wConfig, widgetFn);
+		} else if ($.isPlainObject(moduleFn)) {
+			$.extend(mConfig, moduleFn);
 		} else {
 			$.error('Widget constructor not provided');
 		}
 		//private property to store widget's instances
-		wConfig._instances = [];
+		mConfig._instances = [];
 
-		this.set(wid, wConfig, _silentEvents);
+		this.set(mid, mConfig, _silentEvents);
 	},
 
-	_updateWidget: function (wid, widget) {
-		this.set(wid, widget, _silentEvents);
-		this.emit('sandbox:active:' + wid, widget);
-		this.emit('sandbox:active', widget);
+	_updateModule: function (mid, moduleFn) {
+		this.set(mid, moduleFn, _silentEvents);
+		this.emit('sandbox:update:' + mid, moduleFn);
+		this.emit('sandbox:update', moduleFn);
 	},
 
-	register: function (wid, widgetFn) {
-		if ($.isPlainObject(wid)) {
-			$.each(wid, $.proxy(this._registerWidget, this));
+	register: function (mid, moduleFn) {
+		if ($.isPlainObject(mid)) {
+			$.each(mid, $.proxy(this._registerModule, this));
 		} else {
-			this._registerWidget(wid, widgetFn);
+			this._registerModule(mid, moduleFn);
 		}
 		return this;
 	},
@@ -70,22 +70,22 @@ _Ui.Sandbox = Stapes.subclass({
 
 		$root = this.$root = $(root || document);
 
-		this.each(function (widget, wid) {
+		this.each(function (moduleFn, mid) {
 			var $els,
 				els;
-			if (widget.active === true) {
+			if (moduleFn.active === true) {
 				return;
 			}
 
-			$els = $root.find(widget.selector);
+			$els = $root.find(moduleFn.selector);
 
 			if ($els && $els.length > 0) {
 				els = $els.not('[data-sui-skip],[data-sui-active]').get();
 
-				widget._instances = $.map(els, function (el) {
+				moduleFn._instances = $.map(els, function (el) {
 
 					var $el = $(el),
-						conf = $el.data('sui-' + wid + '-conf') || {},
+						conf = $el.data('sui-' + mid + '-conf') || {},
 						inst;
 
 					if ($.type(conf) === 'string') {
@@ -98,35 +98,35 @@ _Ui.Sandbox = Stapes.subclass({
 
 					conf.$el = $el;
 
-					inst = new widget.callback(conf, sandbox).render();
+					inst = new moduleFn.callback(conf, sandbox).render();
 
-					$el.data('sui-' + wid, inst).attr('data-sui-active', true);
+					$el.data('sui-' + mid, inst).attr('data-sui-active', true);
 
 					return inst;
 
 				});
 			}
-			widget.active = true;
-			this._updateWidget(wid, widget);
+			moduleFn.active = true;
+			this._updateModule(mid, moduleFn);
 		});
 		this.emit('sandbox:start', this);
 	},
 
 	stop: function () {
-		this.each(function (widget, wid) {
+		this.each(function (moduleFn, mid) {
 			var inst;
-			if (!widget.active) {
+			if (!moduleFn.active) {
 				return;
 			}
-			while(widget._instances.length) {
-				inst = widget._instances.pop();
+			while(moduleFn._instances.length) {
+				inst = moduleFn._instances.pop();
 				if ($.isFunction(inst.destroy)) {
 					inst.destroy.call(inst);
 				}
 			}
 
-			widget.active = false;
-			this._updateWidget(wid, widget);
+			moduleFn.active = false;
+			this._updateModule(mid, moduleFn);
 		});
 		this.emit('sandbox:stop', this);
 	}

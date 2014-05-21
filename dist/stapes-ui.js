@@ -1,4 +1,4 @@
-/*! Stapes UI - v0.0.1 - 2014-05-19
+/*! Stapes UI - v0.0.1 - 2014-05-21
 * Copyright (c) 2014 Marco Solazzi; Licensed MIT */
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -116,7 +116,7 @@ _Ui.addInitializer = function (selector, fn) {
 
 var _regxpKey = /([a-z]+)\s?:/ig,
 	_regxpValue = /\'/g,
-	_regxpWid = /\-+/;
+	_regxpMid = /\-+/;
 
 _Ui.Sandbox = Stapes.subclass({
 
@@ -134,38 +134,38 @@ _Ui.Sandbox = Stapes.subclass({
 		return this;
 	},
 
-	_registerWidget: function (id, widgetFn) {
-		var wid = id.replace(_regxpWid, '');
-		var wConfig = {
+	_registerModule: function (id, moduleFn) {
+		var mid = id.replace(_regxpMid, '');
+		var mConfig = {
 			active: false
 		};
-		if ($.isFunction(widgetFn)) {
-			$.extend(wConfig, {
+		if ($.isFunction(moduleFn)) {
+			$.extend(mConfig, {
 				selector: '.' + id,
-				callback: widgetFn
+				callback: moduleFn
 			});
-		} else if ($.isPlainObject(widgetFn)) {
-			$.extend(wConfig, widgetFn);
+		} else if ($.isPlainObject(moduleFn)) {
+			$.extend(mConfig, moduleFn);
 		} else {
 			$.error('Widget constructor not provided');
 		}
 		//private property to store widget's instances
-		wConfig._instances = [];
+		mConfig._instances = [];
 
-		this.set(wid, wConfig, _silentEvents);
+		this.set(mid, mConfig, _silentEvents);
 	},
 
-	_updateWidget: function (wid, widget) {
-		this.set(wid, widget, _silentEvents);
-		this.emit('sandbox:active:' + wid, widget);
-		this.emit('sandbox:active', widget);
+	_updateModule: function (mid, moduleFn) {
+		this.set(mid, moduleFn, _silentEvents);
+		this.emit('sandbox:update:' + mid, moduleFn);
+		this.emit('sandbox:update', moduleFn);
 	},
 
-	register: function (wid, widgetFn) {
-		if ($.isPlainObject(wid)) {
-			$.each(wid, $.proxy(this._registerWidget, this));
+	register: function (mid, moduleFn) {
+		if ($.isPlainObject(mid)) {
+			$.each(mid, $.proxy(this._registerModule, this));
 		} else {
-			this._registerWidget(wid, widgetFn);
+			this._registerModule(mid, moduleFn);
 		}
 		return this;
 	},
@@ -177,22 +177,22 @@ _Ui.Sandbox = Stapes.subclass({
 
 		$root = this.$root = $(root || document);
 
-		this.each(function (widget, wid) {
+		this.each(function (moduleFn, mid) {
 			var $els,
 				els;
-			if (widget.active === true) {
+			if (moduleFn.active === true) {
 				return;
 			}
 
-			$els = $root.find(widget.selector);
+			$els = $root.find(moduleFn.selector);
 
 			if ($els && $els.length > 0) {
 				els = $els.not('[data-sui-skip],[data-sui-active]').get();
 
-				widget._instances = $.map(els, function (el) {
+				moduleFn._instances = $.map(els, function (el) {
 
 					var $el = $(el),
-						conf = $el.data('sui-' + wid + '-conf') || {},
+						conf = $el.data('sui-' + mid + '-conf') || {},
 						inst;
 
 					if ($.type(conf) === 'string') {
@@ -205,53 +205,107 @@ _Ui.Sandbox = Stapes.subclass({
 
 					conf.$el = $el;
 
-					inst = new widget.callback(conf, sandbox).render();
+					inst = new moduleFn.callback(conf, sandbox).render();
 
-					$el.data('sui-' + wid, inst).attr('data-sui-active', true);
+					$el.data('sui-' + mid, inst).attr('data-sui-active', true);
 
 					return inst;
 
 				});
 			}
-			widget.active = true;
-			this._updateWidget(wid, widget);
+			moduleFn.active = true;
+			this._updateModule(mid, moduleFn);
 		});
 		this.emit('sandbox:start', this);
 	},
 
 	stop: function () {
-		this.each(function (widget, wid) {
+		this.each(function (moduleFn, mid) {
 			var inst;
-			if (!widget.active) {
+			if (!moduleFn.active) {
 				return;
 			}
-			while(widget._instances.length) {
-				inst = widget._instances.pop();
+			while(moduleFn._instances.length) {
+				inst = moduleFn._instances.pop();
 				if ($.isFunction(inst.destroy)) {
 					inst.destroy.call(inst);
 				}
 			}
 
-			widget.active = false;
-			this._updateWidget(wid, widget);
+			moduleFn.active = false;
+			this._updateModule(mid, moduleFn);
 		});
 		this.emit('sandbox:stop', this);
 	}
 
 });
 /*global _Ui, _silentEvents */
+
+//This properties are taken from passed in options and copied as instance properties
 var _baseProps = ['$el', 'tagName', 'className'];
 
+/**
+ * Base Module Constructor
+ *
+ * By itself it does nothing, extend it with `Ui.Module.subclass` to define your own Modules
+ *
+ */
 _Ui.Module = Stapes.subclass({
 
-	_options: {},
+	/**
+	 * Default options.
+	 *
+	 * By design the only reserved option is `replace`.
+	 * If set to `true` the original element to which the module is applied to
+	 * will be replaced by a new element created on following template `<{tagName} class="{className}"></div>
+	 *
+	 * @type {Object}
+	 */
+	_options: {
+		replace: false
+	},
 
+	/**
+	 * Default datas.
+	 *
+	 * After initialization they may be retrieved and updated using [Stapes' data methods](http://hay.github.io/stapes/#m-data)
+	 * @type {Object}
+	 */
 	_data: {},
 
+	/**
+	 * Root element tagName.
+	 *
+	 * Used when `options.replace === true`
+	 * @type {String}
+	 */
+	tagName: 'div',
+
+	/**
+	 * Copies some options to the object instance
+	 *
+	 * @private
+	 * @param  {Integer} i  Property index
+	 * @param  {Mixed} prop Property value
+	 */
 	_configureProperty: function (i, prop) {
 		if (this.options.hasOwnProperty(prop)) {
 			this[prop] = this.options[prop];
 		}
+	},
+
+	/**
+	 * Replaces root element with a new one
+	 *
+	 * @private
+	 */
+	_replaceEl: function () {
+		var $newEl = $(document.createElement(this.tagName))
+					.addClass(this.className || '');
+
+		this.$el.replaceWith($newEl);
+
+		this.$el = $newEl;
 	},
 
 	constructor: function (options/*, sandbox*/) {
@@ -261,6 +315,11 @@ _Ui.Module = Stapes.subclass({
 		$.each(_baseProps, $.proxy(this._configureProperty, this));
 
 		this.set( $.extend({}, this._data, options.data || {}), _silentEvents );
+
+		if (this.options.replace === true) {
+			//whether the original element should be replaced with a custom one
+			this._replaceEl();
+		}
 
 		this.initialize.apply(this, arguments);
 
