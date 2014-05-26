@@ -1,0 +1,37 @@
+{
+    "tags": {
+        "allowUnknownTags": true
+    },
+    "source": {
+        "include": ["dist/stapes-ui.js"],
+        "exclude": [],
+        "includePattern": ".+\\.js(doc)?$",
+        "excludePattern": "(^|\\/|\\\\)_"
+    },
+    "plugins"   : ["plugins/markdown"],
+    "templates" : {
+        "cleverLinks"           : false,
+        "monospaceLinks"        : false,
+        "dateFormat"            : "ddd MMM Do YYYY",
+        "outputSourceFiles"     : true,
+        "outputSourcePath"      : true,
+        "systemName"            : "DocStrap",
+        "footer"                : "",
+        "copyright"             : "DocStrap Copyright © 2012-2013 The contributors to the JSDoc3 and DocStrap projects.",
+        "navType"               : "inline",
+        "theme"                 : "united",
+        "linenums"              : true,
+        "collapseSymbols"       : false,
+        "inverseNav"            : true,
+        "highlightTutorialCode" : true
+    },
+    "opts": {
+        "template": "./node_modules/ink-docstrap/template",
+        "encoding": "utf8",
+        "destination": "./docs/"
+    },
+     "markdown"  : {
+        "parser"   : "gfm",
+        "hardwrap" : true
+    }
+}

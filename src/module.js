@@ -13,17 +13,23 @@ var _baseProps = ['$el', 'tagName', 'className'];
 /**
  * Base Module Constructor
  *
- * By itself it does nothing, extend it with `Ui.Module.subclass` to define your own Modules
+ * By itself it does nothing, extend it with `Stapes.Ui.Module.subclass` to define your own Modules
  *
  */
-_Ui.Module = Stapes.subclass({
+_Ui.Module = Stapes.subclass(
+	/** @lends Stapes.Ui.Module.prototype */
+	{
+
+
 
 	/**
 	 * Default options.
 	 *
 	 * By design the only reserved option is `replace`.
-	 * If set to `true` the original element to which the module is applied to
-	 * will be replaced by a new element created on following template `<{tagName} class="{className}"></div>
+	 *
+	 * If set to `true` the original element to which the module is applied to will be replaced by a new element.
+	 *
+	 * @see Stapes.Ui.Module#_replaceEl
 	 *
 	 * @type {Object}
 	 */
@@ -63,7 +69,10 @@ _Ui.Module = Stapes.subclass({
 	/**
 	 * Replaces root element with a new one
 	 *
-	 * @private
+	 * This method is invoked by the constructor if `options.remove === true`
+	 *
+	 * New element will be created on following template `<{tagName} class="{className}"></div>`
+	 *
 	 */
 	_replaceEl: function () {
 		var $newEl = $(document.createElement(this.tagName))
@@ -74,6 +83,13 @@ _Ui.Module = Stapes.subclass({
 		this.$el = $newEl;
 	},
 
+
+	/**
+	 * Default module constructor
+	 *
+	 * Usually you wouldn't overwrite this method. To add custom logic use {@link Stapes.Ui.Module#initialize}
+	 * @constructs
+	 */
 	constructor: function (options/*, sandbox*/) {
 
 		this.options = $.extend({}, this._options, options || {});
@@ -89,12 +105,24 @@ _Ui.Module = Stapes.subclass({
 
 		this.initialize.apply(this, arguments);
 
+		return this;
+
 	},
 
+	/**
+	 * Custom initialization
+	 *
+	 * Overwrite this method with your own logic
+	 *
+	 * @param {Object} [options={}] Instance options
+	 * @param {Stapes.Ui.Sandbox} sandbox Sandbox instance controlling the module
+	 */
 	initialize: function () {
 		//setup your own initialization
 	},
-
+	/**
+	 * Render
+	 */
 	render: function () {
 		/* custom render logic, must always return this */
 		return this;

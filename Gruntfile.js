@@ -26,8 +26,7 @@ module.exports = function(grunt) {
 
 		concat: {
 			options: {
-				stripBanners: true,
-				banner: '<%= meta.banner %>'
+				stripBanners: false
 			},
 			dist: {
 				files: {
@@ -38,7 +37,8 @@ module.exports = function(grunt) {
 
 		uglify: {
 			options: {
-				preserveComments: 'some'
+				preserveComments: 'some',
+				banner: '<%= meta.banner %>'
 			},
 			dist: {
 				files: {

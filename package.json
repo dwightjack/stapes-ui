@@ -5,8 +5,9 @@
   "homepage": "",
   "description": "Stapes.js Widget Framework",
   "main": "dist/stapes-ui.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dwightjack/stapes-ui.git"
   },
   "keywords": [
     "stapes",
@@ -25,6 +26,8 @@
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-uglify": "^0.4.0",
     "grunt-contrib-watch": "^0.6.1",
+    "ink-docstrap": "^0.4.2",
+    "jsdoc": "git+https://github.com/jsdoc3/jsdoc.git",
     "load-grunt-tasks": "^0.4.0"
   }
 }

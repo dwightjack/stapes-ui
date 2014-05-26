@@ -5,36 +5,29 @@
  * @copyright (c) Marco Solazzi
  */
 
-
-
-
 /**
- * =============================
- * Main Namespace
- * =============================
+ * Stapes Ui
+ * @exports stapes/ui
  */
-
 var _Ui = {},
 	_silentEvents = true;
 
 
 /**
- * =============================
  * Unique ID pointer
- * =============================
+ *
+ * @type {Integer}
  */
 _Ui.uid = 0;
 
 
-
-
 /**
- * =============================
  * Configuration options
+ *
  * May be overriden by a custom object
- * =============================
+ *
+ * @type {Object}
  */
-
 _Ui.Config = {
 	DEBUG: false,
 	//verbose logging when DEBUG === true
@@ -42,12 +35,11 @@ _Ui.Config = {
 };
 
 
-/**
- * =============================
- * Event PubSub central hub
- * =============================
- */
 
+/**
+ * Pub/Sub Hub
+ * @see  {@link http://hay.github.io/stapes/#m-mixinEvents}
+ */
 _Ui.vent = Stapes.mixinEvents();
 
 
@@ -67,7 +59,7 @@ _Ui.log = function () {
 /**
  * Runs the application.
  *
- * @param {[Object]} config Optional config parameters
+ * @param {Object} [config] Optional config parameters
  */
 _Ui.init = function (config) {
 
@@ -87,7 +79,7 @@ _Ui.init = function (config) {
 /**
  * Enqueues a function with optional context to the bootstrap event. First argument is the `IWS.Config` object
  *
- * @param {[String]} context Optional selector to run the initializer only when a specified set of elements exists
+ * @param {String} [context] Optional selector to run the initializer only when a specified set of elements exists
  * @param {Function} fn Function to be executed
  */
 _Ui.addInitializer = function (selector, fn) {

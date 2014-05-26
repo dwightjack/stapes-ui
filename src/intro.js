@@ -1,3 +1,10 @@
+/**
+ * Stapes Ui
+ *
+ * @projectDescription  Stapes.js Widget FrameworkEJF is a single namespaced, module pattern oriented functions collection for frontend development.
+ * @author              Marco Solazzi
+ * @license             MIT
+ */
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
