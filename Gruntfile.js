@@ -21,7 +21,8 @@ module.exports = function(grunt) {
 		},
 
 		clean: {
-			dist: ['dist']
+			dist: ['dist'],
+			docs: ['docs']
 		},
 
 		concat: {
@@ -68,6 +69,12 @@ module.exports = function(grunt) {
 			}
 		},
 
+		shell: {
+			docs: {
+				command: './node_modules/.bin/jsdoc -c jsdocs.conf.json'
+			}
+		},
+
 		watch: {
 			src: {
 				files: '<%= jshint.files %>',
@@ -77,7 +84,7 @@ module.exports = function(grunt) {
 
 	});
 
-	grunt.registerTask('dev', ['clean', 'jshint', 'concat', 'jasmine:test']);
+	grunt.registerTask('dev', ['clean', 'jshint', 'concat', 'jasmine:test', 'shell:docs']);
 
 	grunt.registerTask('dist', ['dev', 'uglify']);
 

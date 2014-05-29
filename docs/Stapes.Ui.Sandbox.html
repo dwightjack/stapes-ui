@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>DocStrap Class: Module</title>
+	<title>DocStrap Class: Sandbox</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -43,7 +43,11 @@
 					<ul class="dropdown-menu inline">
 						
 						<li>
-							<a href="Stapes.Ui.html#Module">Module</a>
+							<a href="Stapes.Ui.Module.html">Module</a>
+						</li>
+						
+						<li>
+							<a href="Stapes.Ui.Sandbox.html">Sandbox</a>
 						</li>
 						
 
@@ -63,12 +67,12 @@
 					
 
 
-	<h1 class="page-title">Class: Module</h1>
+	<h1 class="page-title">Class: Sandbox</h1>
 <section>
 
 <header>
     <h2>
-    Module
+    Sandbox
     </h2>
     
 </header>
@@ -80,7 +84,7 @@
     
         
 <dt>
-    <h4 class="name" id="Module"><span class="type-signature"></span>new Module<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Sandbox"><span class="type-signature"></span>new Sandbox<span class="signature">(<span class="optional">module</span>, <span class="optional">moduleConstructor</span>)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
     
 </dt>
@@ -88,8 +92,7 @@
     
     
     <div class="description">
-        <p>Default module constructor</p>
-<p>Usually you wouldn't overwrite this method. To add custom logic use <a href="Stapes.Ui.html#Module#initialize">Stapes.Ui.Module#initialize</a></p>
+        <p>Sandbox constructor</p>
     </div>
     
 
@@ -97,6 +100,103 @@
     
     
     
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>module</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Module ID string, or an object hash composed by <code>'ModuleID': ModuleConstructor</code></p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>moduleConstructor</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Module constructor.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
     
     
     
@@ -127,7 +227,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="stapes-ui.js.html">/home/web/shared/stapes-ui/dist/stapes-ui.js</a>,
-				 <a href="stapes-ui.js.html#sunlight-1-line-349">line 349</a>
+				 <a href="stapes-ui.js.html#sunlight-1-line-152">line 152</a>
 			</li>
 		</ul>
 	</dd>
@@ -150,6 +250,29 @@
     
     
     
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>Sandbox instance</p>
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Object</span>
+
+
+	</dd>
+</dl>
+
+
+        
     
     
 </dd>
@@ -168,108 +291,104 @@
     
 
     
-        <h3 class="subsection-title">Members</h3>
+
+    
+        <h3 class="subsection-title">Methods</h3>
 
         <dl>
             
 <dt>
-    <h4 class="name" id="_data"><span class="type-signature"></span>_data<span class="type-signature"> :Object</span></h4>
+    <h4 class="name" id="register"><span class="type-signature"></span>register<span class="signature">(mid, moduleRegObj)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
     
 </dt>
 <dd>
     
+    
     <div class="description">
-        <p>Default datas.</p>
-<p>After initialization they may be retrieved and updated using <a href="http://hay.github.io/stapes/#m-data">Stapes' data methods</a></p>
+        <p>Registers a module registration object.</p>
+<p>Emits two events: <code>sandbox:update</code> and <code>sandbox:update:{moduleID}</code> with the module registration object itself as argument.</p>
     </div>
     
-    
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">Object</span>
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="stapes-ui.js.html">/home/web/shared/stapes-ui/dist/stapes-ui.js</a>,
-				 <a href="stapes-ui.js.html#sunlight-1-line-302">line 302</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
 
     
     
-</dd>
-
+    
+    
+    
+        <h5>Parameters:</h5>
         
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
             
-<dt>
-    <h4 class="name" id="_options"><span class="type-signature"></span>_options<span class="type-signature"> :Object</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>Default options.</p>
-<p>By design the only reserved option is <code>replace</code>.</p>
-<p>If set to <code>true</code> the original element to which the module is applied to will be replaced by a new element.</p>
-    </div>
-    
-    
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
+                <td class="name"><code>mid</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Module ID</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>moduleRegObj</code></td>
+            
+
+            <td class="type">
+            
                 
 <span class="param-type">Object</span>
 
 
-            </li>
-        </ul>
-    
+            
+            </td>
 
+            
+
+            
+
+            <td class="description last"><p>Module Registration object</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
     
 <dl class="details">
 	
@@ -298,7 +417,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="stapes-ui.js.html">/home/web/shared/stapes-ui/dist/stapes-ui.js</a>,
-				 <a href="stapes-ui.js.html#sunlight-1-line-292">line 292</a>
+				 <a href="stapes-ui.js.html#sunlight-1-line-224">line 224</a>
 			</li>
 		</ul>
 	</dd>
@@ -310,7 +429,7 @@
 	<dt class="tag-see">See:</dt>
 	<dd class="tag-see">
 		<ul>
-			<li><a href="Stapes.Ui.html#Module#_replaceEl">Stapes.Ui.Module#_replaceEl</a></li>
+			<li>Stapes.Ui.Sandbox~_registerModule</li>
 			</ul>
 	</dd>
 	
@@ -320,160 +439,37 @@
 
     
     
-</dd>
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>Sandbox instance</p>
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Object</span>
+
+
+	</dd>
+</dl>
+
 
         
-            
-<dt>
-    <h4 class="name" id="tagName"><span class="type-signature"></span>tagName<span class="type-signature"> :String</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>Root element tagName.</p>
-<p>Used when <code>options.replace === true</code></p>
-    </div>
-    
-    
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">String</span>
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="stapes-ui.js.html">/home/web/shared/stapes-ui/dist/stapes-ui.js</a>,
-				 <a href="stapes-ui.js.html#sunlight-1-line-310">line 310</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-    
-    
-</dd>
-
-        </dl>
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        <dl>
-            
-<dt>
-    <h4 class="name" id="_replaceEl"><span class="type-signature"></span>_replaceEl<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Replaces root element with a new one</p>
-<p>This method is invoked by the constructor if <code>options.remove === true</code></p>
-<p>New element will be created on following template <code>&lt;{tagName} class=&quot;{className}&quot;&gt;&lt;/div&gt;</code></p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="stapes-ui.js.html">/home/web/shared/stapes-ui/dist/stapes-ui.js</a>,
-				 <a href="stapes-ui.js.html#sunlight-1-line-333">line 333</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
     
     
 </dd>
@@ -481,7 +477,7 @@
         
             
 <dt>
-    <h4 class="name" id="initialize"><span class="type-signature"></span>initialize<span class="signature">(<span class="optional">options</span>, sandbox)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="start"><span class="type-signature"></span>start<span class="signature">(<span class="optional">root</span>)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -489,8 +485,8 @@
     
     
     <div class="description">
-        <p>Custom initialization</p>
-<p>Overwrite this method with your own logic</p>
+        <p>Executes registered modules in the sandbox.</p>
+<p>Emits a <code>sandbox:start</code> event with the sandbox instance as argument.</p>
     </div>
     
 
@@ -528,13 +524,19 @@
 
         <tr>
             
-                <td class="name"><code>options</code></td>
+                <td class="name"><code>root</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Object</span>
+<span class="param-type">String</span>
+|
+
+<span class="param-type">DOMElement</span>
+|
+
+<span class="param-type">jQuery</span>
 
 
             
@@ -555,47 +557,12 @@
             
                 <td class="default">
                 
-                    {}
+                    document
                 
                 </td>
             
 
-            <td class="description last"><p>Instance options</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>sandbox</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Stapes.Ui.Sandbox</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><p>Sandbox instance controlling the module</p></td>
+            <td class="description last"><p>Optional root selector/element to use as sandbox root element</p></td>
         </tr>
 
 	
@@ -632,7 +599,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="stapes-ui.js.html">/home/web/shared/stapes-ui/dist/stapes-ui.js</a>,
-				 <a href="stapes-ui.js.html#sunlight-1-line-376">line 376</a>
+				 <a href="stapes-ui.js.html#sunlight-1-line-240">line 240</a>
 			</li>
 		</ul>
 	</dd>
@@ -662,7 +629,7 @@
         
             
 <dt>
-    <h4 class="name" id="render"><span class="type-signature"></span>render<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="stop"><span class="type-signature"></span>stop<span class="signature">()</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -670,7 +637,9 @@
     
     
     <div class="description">
-        <p>Render</p>
+        <p>Stops registered modules in the sandbox.</p>
+<p>Executes the module's instance <code>destroy</code> method if available.
+Emits a <code>sandbox:stop</code> event with the sandbox instance as argument.</p>
     </div>
     
 
@@ -708,7 +677,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="stapes-ui.js.html">/home/web/shared/stapes-ui/dist/stapes-ui.js</a>,
-				 <a href="stapes-ui.js.html#sunlight-1-line-382">line 382</a>
+				 <a href="stapes-ui.js.html#sunlight-1-line-295">line 295</a>
 			</li>
 		</ul>
 	</dd>
@@ -761,7 +730,7 @@
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-dev</a>
-		on Mon May 26th 2014 using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Thu May 29th 2014 using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>

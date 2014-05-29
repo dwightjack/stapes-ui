@@ -88,7 +88,10 @@ _Ui.Module = Stapes.subclass(
 	 * Default module constructor
 	 *
 	 * Usually you wouldn't overwrite this method. To add custom logic use {@link Stapes.Ui.Module#initialize}
+	 *
 	 * @constructs
+	 * @param {Object} [options] Instance options
+	 * @param {Stapes.Ui.Sandbox} [sandbox] The containing sandbox instance.
 	 */
 	constructor: function (options/*, sandbox*/) {
 
@@ -121,13 +124,21 @@ _Ui.Module = Stapes.subclass(
 		//setup your own initialization
 	},
 	/**
-	 * Render
+	 * Rendering method.
+	 *
+	 * Always return `this`
+	 * @return {Object} Module instance
 	 */
 	render: function () {
 		/* custom render logic, must always return this */
 		return this;
 	},
 
+	/**
+	 * Custom method launched at instance destroy.
+	 *
+	 * Used to ubind event and cleanup the DOM
+	 */
 	destroy: function () {
 		/* custom destroy logic */
 	}
