@@ -99,7 +99,7 @@ _Ui.Module = Stapes.subclass(
 
 		$.each(_baseProps, $.proxy(this._configureProperty, this));
 
-		this.set( $.extend({}, this._data, options.data || {}), _silentEvents );
+		this.set( $.extend({}, this._data, this.options.data || {}), _silentEvents );
 
 		if (this.options.replace === true) {
 			//whether the original element should be replaced with a custom one
@@ -150,12 +150,10 @@ _Ui.Module = Stapes.subclass(
 //the default constructor
 var _subclass = _Ui.Module.subclass;
 
-_Ui.Module.subclass = function () {
-	var args = {
-		constructor: _Ui.Module.prototype.constructor
-	};
+_Ui.Module.subclass = function (obj, classOnly) {
+	if (!obj.hasOwnProperty('constructor')) {
+		obj.constructor = _Ui.Module.prototype.constructor;
+	}
+	return _subclass.call(this, obj, classOnly);
 
-	args.push.apply(args, arguments);
-
-	return _subclass.apply(_Ui.Module, args);
 };
