@@ -217,7 +217,7 @@ _Ui.Sandbox = Stapes.subclass(
 	 * Emits two events: `sandbox:update` and `sandbox:update:{moduleID}` with the module registration object itself as argument.
 	 *
 	 * @see Stapes.Ui.Sandbox~_registerModule
-	 * @param {String} mid Module ID
+	 * @param {String|Object} mid Module ID. Accepts a shortcut object `{'moduleID': ModuleConstructor}`
 	 * @param {Object} moduleRegObj Module Registration object
 	 * @return {Object} Sandbox instance
 	 */
