@@ -131,5 +131,137 @@ describe('UI Sandbox', function () {
 
 	});
 
+	it('should run module initialization on start', function () {
+		var module1 = jasmine.createSpy('module1');
+
+		module1.and.callFake(function() {
+	      return new Stapes.Ui.Module();
+	    });
+
+		sandbox.register('module1', module1);
+
+		sandbox.start();
+
+		expect(module1).toHaveBeenCalled();
+	});
+
+	it('should update module registration object and emit an event on start', function () {
+
+		sandbox.register('module1', Stapes.Ui.Module);
+
+		spyOn(sandbox, '_updateModule');
+		spyOn(sandbox, 'emit');
+
+		sandbox.start();
+
+		var callArgs = sandbox._updateModule.calls.argsFor(0);
+
+		expect(callArgs[0]).toBe('module1');
+		expect(callArgs[1].active).toBe(true);
+		expect(callArgs[1]._instances.length).toBeGreaterThan(0);
+
+		expect(sandbox.emit).toHaveBeenCalledWith('sandbox:start', sandbox);
+
+	});
+
+
+	it('should attach to DOM elements, render and add control attributes', function () {
+		var module1 = Stapes.Ui.Module.subclass({
+			render: function () {
+				this.$el.text('works!');
+				return this;
+			}
+		});
+
+		sandbox.register('module1', module1);
+		sandbox.start();
+
+		//$root defaults to document
+		expect(sandbox.$root).toBeMatchedBy(document);
+
+		//module is activated
+		expect($('.module1')).toHaveText('works!');
+		expect($('.module1')).toHaveAttr('data-sui-active', 'true');
+		expect($('.module1')).toHaveData('sui-module1');
+
+
+	});
+
+	it('should read custom module configuration from DOM', function () {
+		var moduleconf = Stapes.Ui.Module.subclass({
+			_options: {
+				count: 1
+			},
+			render: function () {
+				this.$el.text(this.options.count);
+				return this;
+			}
+		});
+
+		sandbox.register('moduleconf', moduleconf);
+		sandbox.start();
+
+		expect($('#moduleconf1')).toHaveText('1');
+		expect($('#moduleconf2')).toHaveText('2');
+	});
+
+	it('should skip DOM elements with data-sui-skip or data-sui-active attribute', function() {
+
+		sandbox.register('moduleskip', Stapes.Ui.Module);
+		sandbox.start();
+
+		var regObj = sandbox.get('moduleskip');
+
+		expect(regObj._instances.length).toBe(1);
+	});
+
+	it('should allow to customize the sandbox root element', function () {
+		sandbox.register('module2', Stapes.Ui.Module);
+
+		sandbox.start('#childSandbox');
+
+		var regObj = sandbox.get('module2');
+
+		expect(sandbox.$root).toBeMatchedBy('#childSandbox');
+		expect(regObj._instances.length).toBe(1);
+
+	});
+
+	it('should run module destroy on stop', function () {
+		var destroySpy = jasmine.createSpy('destroySpy');
+		var module1 = Stapes.Ui.Module.subclass({
+			destroy: destroySpy
+		});
+
+		sandbox.register('module1', module1);
+
+		sandbox.start();
+		sandbox.stop();
+
+		expect(destroySpy).toHaveBeenCalled();
+	});
+
+
+	it('should update module registration object and emit an event on stop', function () {
+
+		sandbox.register('module1', Stapes.Ui.Module);
+
+		sandbox.start();
+
+		spyOn(sandbox, '_updateModule');
+		spyOn(sandbox, 'emit');
+
+		sandbox.stop();
+
+		var callArgs = sandbox._updateModule.calls.argsFor(0);
+
+		expect(callArgs[0]).toBe('module1');
+		expect(callArgs[1].active).toBe(false);
+		expect(callArgs[1]._instances.length).toBe(0);
+
+		expect(sandbox.emit).toHaveBeenCalledWith('sandbox:stop', sandbox);
+
+	});
+
 
 });

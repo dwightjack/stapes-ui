@@ -151,7 +151,7 @@ _Ui.Module = Stapes.subclass(
 var _subclass = _Ui.Module.subclass;
 
 _Ui.Module.subclass = function (obj, classOnly) {
-	if (!obj.hasOwnProperty('constructor')) {
+	if (obj && !obj.hasOwnProperty('constructor')) {
 		obj.constructor = _Ui.Module.prototype.constructor;
 	}
 	return _subclass.call(this, obj, classOnly);
