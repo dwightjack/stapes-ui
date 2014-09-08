@@ -192,8 +192,11 @@ describe('UI Sandbox', function () {
 			_options: {
 				count: 1
 			},
+            _data: {
+                'name': 'John'
+            },
 			render: function () {
-				this.$el.text(this.options.count);
+				this.$el.text(this.options.count + ' ' + this.get('name'));
 				return this;
 			}
 		});
@@ -201,8 +204,9 @@ describe('UI Sandbox', function () {
 		sandbox.register('moduleconf', moduleconf);
 		sandbox.start();
 
-		expect($('#moduleconf1')).toHaveText('1');
-		expect($('#moduleconf2')).toHaveText('2');
+		expect($('#moduleconf1')).toHaveText('1 John');
+        expect($('#moduleconf2')).toHaveText('2 Jane');
+        expect($('#moduleconf3')).toHaveText('3 Jane');
 	});
 
 	it('should skip DOM elements with data-sui-skip or data-sui-active attribute', function() {
