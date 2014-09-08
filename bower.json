@@ -1,6 +1,6 @@
 {
   "name": "stapes-ui",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "authors": [
     "Marco Solazzi <marco.solazzi@gmail.com>"
   ],
@@ -21,10 +21,14 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "docs",
+    "jsdocs.conf.js"
   ],
   "dependencies": {
-    "stapes": "~0.8.1",
-    "jasmine-jquery": "~2.0.3"
+    "stapes": "~0.8.1"
+  },
+  "devDependencies": {
+    "jasmine-jquery": "~2.0.5"
   }
 }

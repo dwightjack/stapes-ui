@@ -42,6 +42,63 @@ _Ui.Sandbox = Stapes.subclass(
 		return this;
 	},
 
+    /**
+     * Parses DOM element `data` attributes to module configuration options.
+     *
+     * @param {String} mid  Module ID string
+     * @param {Object} moduleRegObj Module Registration object
+     * @param {jQuery} $el jQuery-like instance of DOM element to scan
+     * @return {Object}
+     * @private
+     */
+    _parseConfig: function (mid, moduleRegObj, $el) {
+
+
+        var elData;
+        var data;
+        var proto = moduleRegObj.prototype;
+
+        //legacy configuration setup
+        //TODO: remove this
+
+        var conf = $el.data('sui-' + mid + '-conf') || {};
+
+        if ($.type(conf) === 'string') {
+            //maybe a JSON-like with single quotes...
+            //try to cast to JSON
+            //fallback to empty object on failure
+            conf = conf.replace(_regxpKey, '"$1":').replace(_regxpValue, '"');
+            conf = $.parseJSON(conf) || {};
+        }
+
+        //new configuration setup
+        if (proto.hasOwnProperty('_options') && $.isPlainObject(proto._options)) {
+            elData = $el.data();
+            $.each(proto._options, function (key) {
+                var dataKey = mid + key.charAt(0).toUpperCase() + key.substr(1);
+                if (elData.hasOwnProperty(dataKey)) {
+                    conf[key] = elData[dataKey];
+                }
+            });
+        }
+
+        //getting initial data
+        data = $el.data(mid + '-data') || {};
+        if ($.type(data) === 'string') {
+            //maybe a JSON-like with single quotes...
+            //try to cast to JSON
+            //fallback to empty object on failure
+            data = data.replace(_regxpKey, '"$1":').replace(_regxpValue, '"');
+            data = $.parseJSON(data) || {};
+        }
+        if (!conf.data) {
+            conf.data = data;
+        }
+
+        return conf;
+
+    },
+
 	/**
 	 * Registers a module into the sandbox.
 	 *
@@ -138,16 +195,8 @@ _Ui.Sandbox = Stapes.subclass(
 				moduleRegObj._instances = $.map(els, function (el) {
 
 					var $el = $(el),
-						conf = $el.data('sui-' + mid + '-conf') || {},
+						conf = sandbox._parseConfig(mid, moduleRegObj.callback, $el),
 						inst;
-
-					if ($.type(conf) === 'string') {
-						//maybe a JSON-like with single quotes...
-						//try to cast to JSON
-						//fallback to empty object on failure
-						conf = conf.replace(_regxpKey, '"$1":').replace(_regxpValue, '"');
-						conf = $.parseJSON(conf) || {};
-					}
 
 					conf.$el = $el;
 
