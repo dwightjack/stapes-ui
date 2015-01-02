@@ -28,6 +28,7 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-shell": "^1.1.1",
     "ink-docstrap": "^0.4.12",
+    "jsdoc": "file:../../../../tmp/npm-2383-72fe9206/1420236583668-0.934029521420598/d43990f6e425f3d83de315764058fc40a59c1a2e",
     "load-grunt-tasks": "^2.0.0"
   }
 }

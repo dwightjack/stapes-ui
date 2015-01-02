@@ -16,16 +16,14 @@ if (!Function.prototype.bind) {
 
         var aArgs   = Array.prototype.slice.call(arguments, 1),
             fToBind = this,
-            fNOP    = function() {},
+            FNOP    = function() {},
             fBound  = function() {
-                return fToBind.apply(this instanceof fNOP && oThis
-                        ? this
-                        : oThis,
+                return fToBind.apply(this instanceof FNOP && oThis ? this : oThis,
                     aArgs.concat(Array.prototype.slice.call(arguments)));
             };
 
-        fNOP.prototype = this.prototype;
-        fBound.prototype = new fNOP();
+        FNOP.prototype = this.prototype;
+        fBound.prototype = new FNOP();
 
         return fBound;
     };
@@ -40,18 +38,18 @@ var _Ui = {},
     _ = Stapes._;
 
 //Extending utility object with some more functions
-
+/* jshint ignore:start */
 //adapted from https://github.com/jquery/jquery/blob/master/src/core.js#L220
 _.isPlainObject = function( obj ) {
     // Not plain objects:
     // - Any object or value whose internal [[Class]] property is not "[object Object]"
     // - DOM nodes
     // - window
-    if ( _.typeOf( obj ) !== "object" || obj.nodeType || (obj != null && obj === obj.window) ) {
+    if ( _.typeOf( obj ) !== 'object' || obj.nodeType || (obj != null && obj === obj.window) ) {
         return false;
     }
 
-    if ( obj.constructor && obj.constructor.prototype.hasOwnProperty('isPrototypeOf' ) ) {
+    if ( obj.constructor && !obj.constructor.prototype.hasOwnProperty('isPrototypeOf' ) ) {
         return false;
     }
 
@@ -59,6 +57,7 @@ _.isPlainObject = function( obj ) {
     // |obj| is a plain object, created by {} or constructed with new Object
     return true;
 };
+/* jshint ignore:end */
 
 _.forOwn = function (obj, fn) {
     var key;
@@ -151,7 +150,6 @@ _Ui.init = function (config) {
  */
 _Ui.addInitializer = function (selector, fn) {
     var callback;
-
     if (_.typeOf(selector) === 'function') {
         callback = selector;
     } else {

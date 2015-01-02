@@ -5,7 +5,7 @@
  * @copyright (c) Marco Solazzi
  */
 
-/*global _Ui, _silentEvents */
+/*global _Ui, _silentEvents, _  */
 
 var _regxpKey = /([a-z]+)\s?:/ig,
 	_regxpValue = /\'/g,

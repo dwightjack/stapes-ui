@@ -5,7 +5,7 @@
  * @copyright (c) Marco Solazzi
  */
 
-/*global _Ui, _silentEvents */
+/*global _Ui, _silentEvents, _ */
 
 //This properties are taken from passed in options and copied as instance properties
 var _baseProps = ['$el', 'tagName', 'className'];
