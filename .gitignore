@@ -1,2 +1,8 @@
 bower_components
 node_modules
+*.sublime-workspace
+*.sublime-project
+nbproject
+.idea
+.externalToolBuilders
+docs/*

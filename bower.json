@@ -23,7 +23,12 @@
     "test",
     "tests",
     "docs",
-    "jsdocs.conf.js"
+    "jsdocs.conf.js",
+    "Gruntfile.js",
+    ".editorconfig",
+    ".gitignore",
+    ".jshintrc",
+    ".jsbeautifyrc"
   ],
   "dependencies": {
     "stapes": "~0.8.1"
