@@ -22,7 +22,7 @@ Then reference the library and its dependencies in your HTML:
 _**Note:** Since jQuery is not a strict dependency, you need to install it separately or use a jQuery compatible library._
 
 ##Library Overview
- 
+
 Stapes UI consists of three parts:
 
 * **Core** methods and objects to inizialize (`Stapes.Ui.addInitializer`) and bootstrap (`Stapes.Ui.init`) your application, plus a central event hub (`Stapes.Ui.vent`).
@@ -36,13 +36,13 @@ The most basic but useful usage example of Stapes UI is setting up a list of ini
 	//Generic initializer
 	Stapes.Ui.addInitializer(function () {
 		console.log('started!');
-	});	
-	
+	});
+
 	//DOM filtered initializer
 	//runs only when the selector matches
 	Stapes.Ui.addInitializer('#my-block', function (stapesConf, selector, $matches) {
 		console.log($matches.length);
-	});	
+	});
 
 	//more code...
 
@@ -51,7 +51,7 @@ The most basic but useful usage example of Stapes UI is setting up a list of ini
 In the second initializer we added a _DOM filter_ which will try to match the given selector before launching the callback. This callback receives three arguments:
 
 * a reference to the current `Stapes.Ui.Config` object
-* the provided selector 
+* the provided selector
 * a jQuery-like object of the matched elements
 
 ##Getting started with Modules and Sandboxes
@@ -60,13 +60,13 @@ While initializers are a nifty feature, you may need more strucured components f
 
 ###Modules
 
-A *Module* in Stapes UI is a UI component, like an image gallery or a content slider. Since there's no different interface for model and view (like in Backbone) everything reside on a single object. While this might look _dirty_ to some, it's a convenient setup for small UIs.
+A *Module* in Stapes UI is a UI component, like an image gallery or a content slider. Since there're no different interfaces for model and view (like in Backbone) everything reside on a single object. While this might look _dirty_ to some, it's a convenient setup for small UIs.
 
 Here is an example:
 
-	
+
 	<div class="test-module"></div>
-	
+
 	<script>
 		var TestModule = Stapes.Ui.Module.subclass({
 			render: function () {
@@ -76,7 +76,7 @@ Here is an example:
 				return this;
 			};
 		});
-		
+
 		var testModuleInstance = new TestModule({
 			$el: $('.test-module'),
 			color: 'blue',
@@ -84,7 +84,7 @@ Here is an example:
 				name: 'John'
 			}
 		});
-	
+
 		testModuleInstance.render();
 	</script>
 
@@ -96,32 +96,29 @@ A *Sandbox* acts as a central hub for modules. Think of it as a panel of your in
 
 As an example let's use the previous `TestModule` into a sandbox:
 
-	<div id="main-panel">
-		<div class="test-module"></div>
-		<!-- ... -->
-	</div>
-	
+	<div class="test-module"></div>
+
 	<script>
 		var sandbox = new Stapes.Ui.Sandbox();
-			
-		//register the module			
+
+		//register the module
 		sandbox.register('testModule', {
 			selector: '.test-module'
 			callback: TestModule
 		});
-	
+
 		//startup the sandbox
 		sandbox.start('#main-panel');
-		
+
 	</script>
 
-This way the sandbox will match every `'.test-module'` element inside `'#main-panel'` and for each it'll instantiate `TestModule`. If no selector is provided, `document` will be used as the sandbox root element.
+This way the sandbox will match every `'.test-module'` element inside `'#main-panel'` and for each it'll instantiate `TestModule`.
 
 To kill the sandbox just run: `sandbox.stop()`. This method will cycle throught active modules and run their `.destroy()` method if available.
 
 ###Module defaults and inline configurations
 
-As you may notice there's no way to pass custom data nor options to modules' instances when using sandboxes. 
+As you may notice there's no way to pass custom data nor options to modules' instances when using sandboxes.
 
 To overcome this problem you may set default data and options in the module's constructor:
 
@@ -137,35 +134,16 @@ To overcome this problem you may set default data and options in the module's co
 		};
 	});
 
-Then, to customize them for a single instance set an attribute `data-sui-<moduleid>` on the DOM element with a JSON-like value:
+Then, to customize them for a single instance set an attribute `data-<modulename>-<option-name>` on the DOM element with custom value:
 
-	<div class="test-module" data-sui-testModule="{{'data': 'name': 'Jane'}, 'color': 'red' }"></div>
+	<div class="test-module" data-test-module-color="red"></div>
+
+To pass custom data values, set an attribute `data-<modulename>-data` with a JSON-like value:
+
+	<div class="test-module" data-test-module-data="{'name': 'Jane'}"></div>
 
 If you want to avoid certain elements to be matched just add `data-sui-skip`:
 
 	<div class="test-module" data-sui-skip></div>
 
-###Sandbox Module Styling
-
-To address FOUC and showing modules before they get _interactive_, you may leverage the `data-sui-active` attribute which is automatically added by the sandbox initialization routine:
-
-	.mymodule {
-		display: none
-	}
-	.mymodule[data-sui-active] {
-		display: block
-	}
-
-This way you may provide both fallback and enhanced styles for your module
-
-###Events
-
-Stapes UI leverages [Stapes event system](http://hay.github.io/stapes/#m-events) to provide flexible event management.
-
-**Global event hub**
-
-Use `Stapes.Ui.vent` to register handlers and listen to events on a global, per-project scope.
-
-Stapes.Ui.vent.on('myevent', function () {
-	console.log(e.)
-});
+This way no instance will be created on that element.

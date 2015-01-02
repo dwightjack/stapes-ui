@@ -96,7 +96,7 @@ _Ui.Module = Stapes.subclass(
 
             this.options = _.extend({}, this._options, options || {});
 
-            _baseProps.forEach(this._configureProperty.bind(this));
+            _.each(_baseProps, this._configureProperty.bind(this));
 
             this.set(_.extend({}, this._data, this.options.data || {}), _silentEvents);
 
