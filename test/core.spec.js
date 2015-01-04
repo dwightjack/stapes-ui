@@ -43,20 +43,6 @@ describe('Core Functionalities', function () {
 
 
 
-	it('should have a `log` method which delegates to `console.log`', function () {
-
-		var msg = 'test';
-
-		spyOn(console, 'log');
-
-		Stapes.Ui.log(msg);
-
-		expect(console.log).toHaveBeenCalledWith(msg);
-
-	});
-
-
-
 	it('should have a method to enqueue initialization functions which proxies to `.vent` ', function () {
 
 		var cb = function () {};

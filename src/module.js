@@ -5,7 +5,7 @@
  * @copyright (c) Marco Solazzi
  */
 
-/*global _Ui, _silentEvents, _ */
+/*global _Ui, _silentEvents, _, _noop */
 
 //This properties are taken from passed in options and copied as instance properties
 var _baseProps = ['$el', 'tagName', 'className'];
@@ -124,9 +124,7 @@ _Ui.Module = Stapes.subclass(
          * @param {Object} [options={}] Instance options
          * @param {Stapes.Ui.Sandbox} sandbox Sandbox instance controlling the module
          */
-        initialize: function () {
-            //setup your own initialization
-        },
+        initialize: _noop,
         /**
          * Rendering method.
          *
@@ -143,36 +141,28 @@ _Ui.Module = Stapes.subclass(
          *
          * Used to unbind event and cleanup the DOM
          */
-        destroy: function () {
-            /* custom destroy logic */
-        },
+        destroy: _noop,
 
         /**
          * Emits an event to the parent sandbox (if passed in on initialization)
          *
          * @see http://hay.github.io/stapes/#m-emit
          */
-        broadcast: function () {
-
-        },
+        broadcast: _noop,
 
         /**
          * Listens for an event from the parent sandbox (if passed in on initialization)
          *
          * @see http://hay.github.io/stapes/#m-on
          */
-        onBroadcast: function () {
-
-        },
+        onBroadcast: _noop,
 
         /**
          * Removes a listener for an event from the parent sandbox (if passed in on initialization)
          *
          * @see http://hay.github.io/stapes/#m-off
          */
-        offBroadcast: function () {
-
-        }
+        offBroadcast: _noop
 
     });
 

@@ -118,7 +118,8 @@ _Ui.Sandbox = Stapes.subclass(
         };
         if (_.typeOf(moduleFn) === 'function') {
             _.extend(moduleRegObj, {
-                selector: '.' + id,
+                //selector: '.' + id,
+                selector: '[data-sui-module="' + id + '"]',
                 callback: moduleFn
             });
         } else if (_.isPlainObject(moduleFn)) {
@@ -248,3 +249,5 @@ _Ui.Sandbox = Stapes.subclass(
     }
 
 });
+
+_Ui.Sandbox.legacySelector = false;

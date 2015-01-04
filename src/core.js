@@ -35,7 +35,9 @@ if (!Function.prototype.bind) {
  */
 var _Ui = {},
     _silentEvents = true,
-    _ = Stapes._;
+    _ = Stapes._,
+    _noop = function () {},
+    _log = typeof console !== 'undefined' && !!console.log ? Function.prototype.bind.call( console.log, console ) : _noop;
 
 //Extending utility object with some more functions
 /* jshint ignore:start */
@@ -119,7 +121,7 @@ _Ui.vent = Stapes.mixinEvents();
  * Logging method. May be override in production
  */
 _Ui.log = function () {
-    console.log.apply(console, arguments);
+    _log.apply( console, arguments );
 };
 
 /**

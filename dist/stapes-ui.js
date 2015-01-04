@@ -56,7 +56,9 @@ if (!Function.prototype.bind) {
  */
 var _Ui = {},
     _silentEvents = true,
-    _ = Stapes._;
+    _ = Stapes._,
+    _noop = function () {},
+    _log = typeof console !== 'undefined' && !!console.log ? Function.prototype.bind.call( console.log, console ) : _noop;
 
 //Extending utility object with some more functions
 /* jshint ignore:start */
@@ -140,7 +142,7 @@ _Ui.vent = Stapes.mixinEvents();
  * Logging method. May be override in production
  */
 _Ui.log = function () {
-    console.log.apply(console, arguments);
+    _log.apply( console, arguments );
 };
 
 /**
@@ -304,7 +306,8 @@ _Ui.Sandbox = Stapes.subclass(
         };
         if (_.typeOf(moduleFn) === 'function') {
             _.extend(moduleRegObj, {
-                selector: '.' + id,
+                //selector: '.' + id,
+                selector: '[data-sui-module="' + id + '"]',
                 callback: moduleFn
             });
         } else if (_.isPlainObject(moduleFn)) {
@@ -434,6 +437,8 @@ _Ui.Sandbox = Stapes.subclass(
     }
 
 });
+
+_Ui.Sandbox.legacySelector = false;
 /**
  * Stapes UI Base Module
  *
@@ -441,7 +446,7 @@ _Ui.Sandbox = Stapes.subclass(
  * @copyright (c) Marco Solazzi
  */
 
-/*global _Ui, _silentEvents, _ */
+/*global _Ui, _silentEvents, _, _noop */
 
 //This properties are taken from passed in options and copied as instance properties
 var _baseProps = ['$el', 'tagName', 'className'];
@@ -560,9 +565,7 @@ _Ui.Module = Stapes.subclass(
          * @param {Object} [options={}] Instance options
          * @param {Stapes.Ui.Sandbox} sandbox Sandbox instance controlling the module
          */
-        initialize: function () {
-            //setup your own initialization
-        },
+        initialize: _noop,
         /**
          * Rendering method.
          *
@@ -579,36 +582,28 @@ _Ui.Module = Stapes.subclass(
          *
          * Used to unbind event and cleanup the DOM
          */
-        destroy: function () {
-            /* custom destroy logic */
-        },
+        destroy: _noop,
 
         /**
          * Emits an event to the parent sandbox (if passed in on initialization)
          *
          * @see http://hay.github.io/stapes/#m-emit
          */
-        broadcast: function () {
-
-        },
+        broadcast: _noop,
 
         /**
          * Listens for an event from the parent sandbox (if passed in on initialization)
          *
          * @see http://hay.github.io/stapes/#m-on
          */
-        onBroadcast: function () {
-
-        },
+        onBroadcast: _noop,
 
         /**
          * Removes a listener for an event from the parent sandbox (if passed in on initialization)
          *
          * @see http://hay.github.io/stapes/#m-off
          */
-        offBroadcast: function () {
-
-        }
+        offBroadcast: _noop
 
     });
 
