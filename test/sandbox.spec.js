@@ -267,5 +267,47 @@ describe('UI Sandbox', function () {
 
 	});
 
+	it('should allow modules to send messages to parent sandbox', function () {
+
+		sandbox.start();
+		spyOn(sandbox, 'emit');
+
+		//attach a module after sandbox is started
+		var mod = new Stapes.Ui.Module({}, sandbox);
+
+		mod.broadcast('test');
+		expect(sandbox.emit).toHaveBeenCalled();
+
+
+	});
+
+	it('should allow modules to receive messages from parent sandbox', function () {
+
+		sandbox.start();
+		spyOn(sandbox, 'on');
+
+		//attach a module after sandbox is started
+		var mod = new Stapes.Ui.Module({}, sandbox);
+
+		mod.onBroadcast('test', function() {});
+		expect(sandbox.on).toHaveBeenCalledWith('test', jasmine.any(Function));
+
+	});
+
+	it('should allow modules to unregister to messages from parent sandbox', function () {
+
+		sandbox.start();
+
+		spyOn(sandbox, 'off');
+
+		//attach a module after sandbox is started
+		var mod = new Stapes.Ui.Module({}, sandbox);
+
+		mod.offBroadcast('test');
+
+		expect(sandbox.off).toHaveBeenCalledWith('test');
+
+	});
+
 
 });

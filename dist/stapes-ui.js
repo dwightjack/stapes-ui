@@ -376,7 +376,7 @@ _Ui.Sandbox = Stapes.subclass(
             var $els,
                 els,
                 instances = moduleRegObj._instances;
-            if (moduleRegObj.active === true) {
+            if (moduleRegObj.active === true || !moduleRegObj.selector) {
                 return;
             }
 
