@@ -13,10 +13,10 @@
         // Node. Does not work with strict CommonJS, but
         // only CommonJS-like environments that support module.exports,
         // like Node.
-        module.exports = factory(require('stapes'), require('jquery'));
+        module.exports = factory(require('stapes'), require.resolve('jquery') ? require('jquery') : {});
     } else {
         // Browser globals (root is window)
-        root.Stapes.Ui = factory(root.Stapes, root.jQuery);
+        root.Stapes.Ui = factory(root.Stapes, (root.jQuery || root.Zepto || root.ender || root.$));
     }
 }(this, function (Stapes, $) {
 /**
@@ -104,6 +104,11 @@ _.each = function (array, fn) {
 
 
 /**
+ * DOM Library reference
+ */
+_Ui.$ = $;
+
+/**
  * Unique ID pointer
  *
  * @type {Integer}
@@ -177,7 +182,7 @@ _Ui.addInitializer = function (selector, fn) {
         callback = selector;
     } else {
         callback = function (config) {
-            var $els = $(selector);
+            var $els = _Ui.$(selector);
             if ($els && $els.length > 0) {
                 fn.call(null, config, selector, $els);
             }
@@ -256,7 +261,7 @@ _Ui.Sandbox = Stapes.subclass(
             //try to cast to JSON
             //fallback to empty object on failure
             conf = conf.replace(_regxpKey, '"$1":').replace(_regxpValue, '"');
-            conf = $.parseJSON(conf) || {};
+            conf = _Ui.$.parseJSON(conf) || {};
         }
 
         //new configuration setup
@@ -277,7 +282,7 @@ _Ui.Sandbox = Stapes.subclass(
             //try to cast to JSON
             //fallback to empty object on failure
             data = data.replace(_regxpKey, '"$1":').replace(_regxpValue, '"');
-            data = $.parseJSON(data) || {};
+            data = _Ui.$.parseJSON(data) || {};
         }
         if (!conf.data) {
             conf.data = data;
@@ -367,7 +372,7 @@ _Ui.Sandbox = Stapes.subclass(
         var $root,
             sandbox = this;
 
-        $root = this.$root = $(root || document);
+        $root = this.$root = _Ui.$(root || document);
 
         //before starting a sandbox, ensure it's stopped
         this.stop();
@@ -387,7 +392,7 @@ _Ui.Sandbox = Stapes.subclass(
 
                 _.each(els, function (el) {
 
-                    var $el = $(el),
+                    var $el = _Ui.$(el),
                         conf = sandbox._parseConfig(mid, moduleRegObj.callback, $el),
                         inst;
 
@@ -515,7 +520,7 @@ _Ui.Module = Stapes.subclass(
          *
          */
         _replaceEl: function () {
-            var $newEl = $(document.createElement(this.tagName))
+            var $newEl = _Ui.$(document.createElement(this.tagName))
                 .addClass(this.className || '');
 
             this.$el.replaceWith($newEl);

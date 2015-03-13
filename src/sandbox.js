@@ -68,7 +68,7 @@ _Ui.Sandbox = Stapes.subclass(
             //try to cast to JSON
             //fallback to empty object on failure
             conf = conf.replace(_regxpKey, '"$1":').replace(_regxpValue, '"');
-            conf = $.parseJSON(conf) || {};
+            conf = _Ui.$.parseJSON(conf) || {};
         }
 
         //new configuration setup
@@ -89,7 +89,7 @@ _Ui.Sandbox = Stapes.subclass(
             //try to cast to JSON
             //fallback to empty object on failure
             data = data.replace(_regxpKey, '"$1":').replace(_regxpValue, '"');
-            data = $.parseJSON(data) || {};
+            data = _Ui.$.parseJSON(data) || {};
         }
         if (!conf.data) {
             conf.data = data;
@@ -179,7 +179,7 @@ _Ui.Sandbox = Stapes.subclass(
         var $root,
             sandbox = this;
 
-        $root = this.$root = $(root || document);
+        $root = this.$root = _Ui.$(root || document);
 
         //before starting a sandbox, ensure it's stopped
         this.stop();
@@ -199,7 +199,7 @@ _Ui.Sandbox = Stapes.subclass(
 
                 _.each(els, function (el) {
 
-                    var $el = $(el),
+                    var $el = _Ui.$(el),
                         conf = sandbox._parseConfig(mid, moduleRegObj.callback, $el),
                         inst;
 

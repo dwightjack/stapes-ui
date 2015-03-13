@@ -83,6 +83,11 @@ _.each = function (array, fn) {
 
 
 /**
+ * DOM Library reference
+ */
+_Ui.$ = $;
+
+/**
  * Unique ID pointer
  *
  * @type {Integer}
@@ -156,7 +161,7 @@ _Ui.addInitializer = function (selector, fn) {
         callback = selector;
     } else {
         callback = function (config) {
-            var $els = $(selector);
+            var $els = _Ui.$(selector);
             if ($els && $els.length > 0) {
                 fn.call(null, config, selector, $els);
             }

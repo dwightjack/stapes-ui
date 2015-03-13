@@ -74,7 +74,7 @@ _Ui.Module = Stapes.subclass(
          *
          */
         _replaceEl: function () {
-            var $newEl = $(document.createElement(this.tagName))
+            var $newEl = _Ui.$(document.createElement(this.tagName))
                 .addClass(this.className || '');
 
             this.$el.replaceWith($newEl);
