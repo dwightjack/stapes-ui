@@ -1,7 +1,5 @@
 /*global describe, it, expect, jasmine, spyOn, loadFixtures, beforeEach */
 
-jasmine.getFixtures().fixturesPath = 'test/fixtures';
-
 describe('Core Functionalities', function () {
 
 	beforeEach(function () {

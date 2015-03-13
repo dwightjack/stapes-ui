@@ -1,6 +1,6 @@
 {
   "name": "stapes-ui",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "authors": [
     "Marco Solazzi <marco.solazzi@gmail.com>"
   ],
@@ -24,11 +24,12 @@
     "tests",
     "docs",
     "jsdocs.conf.js",
-    "Gruntfile.js",
+    "karma.conf.js",
+    "gulpfile.js",
     ".editorconfig",
     ".gitignore",
     ".jshintrc",
-    ".jsbeautifyrc"
+    ".jscsrc"
   ],
   "dependencies": {
     "stapes": "~0.8.1"

@@ -1,7 +1,5 @@
 /*global describe, expect, it, jasmine, loadFixtures, beforeEach, spyOn */
 
-jasmine.getFixtures().fixturesPath = 'test/fixtures';
-
 describe('Base Module', function () {
 
 	beforeEach(function () {
