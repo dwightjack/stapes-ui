@@ -19,7 +19,15 @@ Then reference the library and its dependencies in your HTML:
 	<script src="/bower_components/stapes-ui/dist/stapes-ui.js"></script>
 
 
-_**Note:** Since jQuery is not a strict dependency, you need to install it separately or use a jQuery compatible library._
+_**Note:** Since jQuery is not a strict dependency, you need to install it separately or use a jQuery compatible library like Zepto._
+
+###Using a different DOM Library
+
+In all environments Stapes UI will try to use jQuery as default DOM library. You may use a different library by either aliasing it as `'jquery'` (in Browserify or AMD) or by manually setting it in Stapes UI:
+  
+	//Use Zepto as default DOM library
+	Stapes.Ui.$ = Zepto;
+  
 
 ##Library Overview
 
@@ -83,11 +91,11 @@ Here is an example:
 				.css('color', this.options.color)
 				.text('Hi' + this.get('name'));
 				return this;
-			};
+			}
 		});
 
 		var testModuleInstance = new TestModule({
-			$el: $('.test-module'),
+			$el: '.test-module',
 			color: 'blue',
 			data: {
 				name: 'John'
@@ -97,7 +105,9 @@ Here is an example:
 		testModuleInstance.render();
 	</script>
 
-The module instance will attach itself to the `#test-module` element and will fill the text with the given data.
+The module instance will attach itself to the `.test-module` element and will fill the text with the given data.
+
+_**Note:** `$el` parameter could be either a CSS string selector, a jQuery like object or a DOMElement node or collection (for instance a `document.querySelector` call result)._
 
 ###Sandboxes
 

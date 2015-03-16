@@ -103,6 +103,10 @@ _Ui.Module = Stapes.subclass(
             if (this.options.replace === true) {
                 //whether the original element should be replaced with a custom one
                 this._replaceEl();
+            } else {
+                //normalize `el` and `$el` references
+                this.$el = this.$el instanceof _Ui.$ ? this.$el : _Ui.$(this.$el);
+                this.el = this.$el[0];
             }
             if (sandbox && sandbox instanceof _Ui.Sandbox) {
                 this.broadcast = sandbox.emit.bind(sandbox);
