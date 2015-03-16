@@ -1,0 +1,9 @@
+{
+    "preset": "airbnb",
+    "validateLineBreaks": "LF",
+    "validateIndentation": 4,
+    "disallowSpacesInAnonymousFunctionExpression": null,
+    "disallowSpacesInFunctionExpression": null,
+	"disallowMultipleLineBreaks": null,
+    "excludeFiles": ["node_modules/**", "bower_components/**"]
+}

@@ -1,7 +1,5 @@
 /*global describe, it, expect, jasmine, spyOn, loadFixtures, beforeEach */
 
-jasmine.getFixtures().fixturesPath = 'test/fixtures';
-
 describe('Core Functionalities', function () {
 
 	beforeEach(function () {
@@ -43,20 +41,6 @@ describe('Core Functionalities', function () {
 
 
 
-	it('should have a `log` method which delegates to `console.log`', function () {
-
-		var msg = 'test';
-
-		spyOn(console, 'log');
-
-		Stapes.Ui.log(msg);
-
-		expect(console.log).toHaveBeenCalledWith(msg);
-
-	});
-
-
-
 	it('should have a method to enqueue initialization functions which proxies to `.vent` ', function () {
 
 		var cb = function () {};
@@ -88,10 +72,11 @@ describe('Core Functionalities', function () {
 
 
 
-	it('should allow to filter inizializer based on DOM selectors', function () {
+	it('should allow to filter initializer based on DOM selectors', function () {
 
 		var initSpy = jasmine.createSpy('initSpy');
 		var initSpy2 = jasmine.createSpy('initSpy2');
+		var $testEl = jQuery('#test-el');
 
 		Stapes.Ui.addInitializer('#test-el', initSpy);
 
@@ -99,7 +84,7 @@ describe('Core Functionalities', function () {
 
 		Stapes.Ui.init();
 
-		expect(initSpy).toHaveBeenCalledWith(Stapes.Ui.Config, '#test-el', jasmine.any(jQuery));
+		expect(initSpy).toHaveBeenCalledWith(Stapes.Ui.Config, '#test-el', $testEl);
 
 		expect(initSpy2).not.toHaveBeenCalled();
 

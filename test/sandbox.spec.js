@@ -1,7 +1,5 @@
 /*global describe, expect, it, jasmine, loadFixtures, beforeEach, spyOn */
 
-jasmine.getFixtures().fixturesPath = 'test/fixtures';
-
 describe('UI Sandbox', function () {
 
 	var sandbox;
@@ -35,7 +33,7 @@ describe('UI Sandbox', function () {
 
 		var id = 'testModule',
 			regObj = {
-				selector: '.test',
+				selector: '[data-sui-module="test"]',
 				callback: function () {}
 			};
 
@@ -51,7 +49,7 @@ describe('UI Sandbox', function () {
 
 		var id = 'testModule',
 			regObj = {
-				selector: '.test',
+				selector: '[data-sui-module="test"]',
 				callback: function () {},
 				_instances: false //this should be forced to empty array
 			},
@@ -64,7 +62,7 @@ describe('UI Sandbox', function () {
 
 		var callArgs = sandbox.set.calls.argsFor(0);
 
-		expect(callArgs[1].selector).toBe('.test');
+		expect(callArgs[1].selector).toBe('[data-sui-module="test"]');
 		expect(callArgs[1].callback).toEqual(jasmine.any(Function));
 		expect(callArgs[1].active).toBe(false);
 		expect(callArgs[1]._instances).toEqual(jasmine.any(Array));
@@ -74,7 +72,7 @@ describe('UI Sandbox', function () {
 
 		var callArgs2 = sandbox.set.calls.argsFor(1);
 
-		expect(callArgs2[1].selector).toBe('.testModule2');
+		expect(callArgs2[1].selector).toBe('[data-sui-module="testModule2"]');
 		expect(callArgs2[1].callback).toEqual(jasmine.any(Function));
 		expect(callArgs2[1].active).toBe(false);
 	});
@@ -83,7 +81,7 @@ describe('UI Sandbox', function () {
 	it('should update a registration object and emit events', function () {
 
 		var updateObj = {
-			selector: '.anotherOne',
+			selector: '[data-sui-module="anotherOne"]',
 			callback: function () {},
 			active: true
 		};
@@ -180,9 +178,9 @@ describe('UI Sandbox', function () {
 		expect(sandbox.$root).toBeMatchedBy(document);
 
 		//module is activated
-		expect($('.module1')).toHaveText('works!');
-		expect($('.module1')).toHaveAttr('data-sui-active', 'true');
-		expect($('.module1')).toHaveData('sui-module1');
+		expect($('[data-sui-module="module1"]')).toHaveText('works!');
+		expect($('[data-sui-module="module1"]')).toHaveAttr('data-sui-active', 'true');
+		expect($('[data-sui-module="module1"]')).toHaveData('sui-module1');
 
 
 	});
@@ -264,6 +262,48 @@ describe('UI Sandbox', function () {
 		expect(callArgs[1]._instances.length).toBe(0);
 
 		expect(sandbox.emit).toHaveBeenCalledWith('sandbox:stop', sandbox);
+
+	});
+
+	it('should allow modules to send messages to parent sandbox', function () {
+
+		sandbox.start();
+		spyOn(sandbox, 'emit');
+
+		//attach a module after sandbox is started
+		var mod = new Stapes.Ui.Module({}, sandbox);
+
+		mod.broadcast('test');
+		expect(sandbox.emit).toHaveBeenCalled();
+
+
+	});
+
+	it('should allow modules to receive messages from parent sandbox', function () {
+
+		sandbox.start();
+		spyOn(sandbox, 'on');
+
+		//attach a module after sandbox is started
+		var mod = new Stapes.Ui.Module({}, sandbox);
+
+		mod.onBroadcast('test', function() {});
+		expect(sandbox.on).toHaveBeenCalledWith('test', jasmine.any(Function));
+
+	});
+
+	it('should allow modules to unregister to messages from parent sandbox', function () {
+
+		sandbox.start();
+
+		spyOn(sandbox, 'off');
+
+		//attach a module after sandbox is started
+		var mod = new Stapes.Ui.Module({}, sandbox);
+
+		mod.offBroadcast('test');
+
+		expect(sandbox.off).toHaveBeenCalledWith('test');
 
 	});
 
