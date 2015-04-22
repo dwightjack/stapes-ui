@@ -1,10 +1,15 @@
-/*global describe, expect, it, jasmine, loadFixtures, beforeEach, spyOn */
+/*global describe, expect, it, jasmine, beforeEach, spyOn, afterEach */
 
 describe('Base Module', function () {
 
     beforeEach(function () {
-        loadFixtures('module.html');
+        document.body.innerHTML = window.__html__['test/fixtures/module.html'];
     });
+
+    afterEach(function () {
+        document.body.innerHTML = '';
+    });
+
 
 
     it('should pass arguments to an initialize method on instance creation', function () {
@@ -31,13 +36,13 @@ describe('Base Module', function () {
     });
 
     it('should attach itself to a DOM element', function () {
-        var $base = $('#base-module');
+        var base = document.getElementById('base-module');
         var modInst = new Stapes.Ui.Module({
-            $el: $base
+            el: '#base-module'
         });
 
-        expect(modInst.$el).toBe($base);
-        expect(modInst.el).toBe($base[0]);
+        expect(modInst.$el instanceof Stapes.Ui.$).toBe(true);
+        expect(modInst.el).toBe(base);
 
     });
 
@@ -55,16 +60,17 @@ describe('Base Module', function () {
     it('should replace the root element on options.replace = true', function () {
 
         var modInst = new Stapes.Ui.Module({
-            $el: $('#replace-me'),
+            el: '#replace-me',
             replace: true,
             tagName: 'h1',
             className: 'replaced'
         });
 
-        expect(modInst.$el).toBeMatchedBy('h1.replaced');
+        expect(modInst.$el[0].tagName).toBe('H1');
+        expect(modInst.$el[0].className).toBe('replaced');
 
         //also replaced in DOM
-        expect($('h1.replaced')).toBeInDOM();
+        expect(document.querySelectorAll('h1.replaced').length).toBe(1);
 
     });
 

@@ -1,12 +1,15 @@
-/*global describe, it, expect, jasmine, spyOn, loadFixtures, beforeEach */
+/*global describe, it, expect, jasmine, spyOn, beforeEach, afterEach */
 
 describe('Core Functionalities', function () {
 
 	beforeEach(function () {
-		loadFixtures('core.html');
+        document.body.innerHTML = window.__html__['test/fixtures/core.html'];
 	});
 
 
+    afterEach(function () {
+        document.body.innerHTML = '';
+    });
 
 	it('should expose a Stapes.Ui namespace', function () {
 
@@ -76,7 +79,7 @@ describe('Core Functionalities', function () {
 
 		var initSpy = jasmine.createSpy('initSpy');
 		var initSpy2 = jasmine.createSpy('initSpy2');
-		var $testEl = jQuery('#test-el');
+		var $testEl = Stapes.Ui.$('#test-el');
 
 		Stapes.Ui.addInitializer('#test-el', initSpy);
 
@@ -89,5 +92,7 @@ describe('Core Functionalities', function () {
 		expect(initSpy2).not.toHaveBeenCalled();
 
 	});
+
+
 
 });

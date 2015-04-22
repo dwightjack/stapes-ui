@@ -1,5 +1,7 @@
 var Ui = require('./../../dist/stapes-ui');
 
+//using jQuery
+Ui.$ = require('jquery');
 
 var MyMod = Ui.Module.subclass({
     render: function () {
@@ -11,7 +13,7 @@ var MyMod = Ui.Module.subclass({
 });
 
 new MyMod({
-    $el: Ui.$('#test-block'),
+    el: '#test-block',
     color: 'blue',
     data: {
         name: 'John'

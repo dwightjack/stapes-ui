@@ -1,24 +1,24 @@
 /**
  * Stapes Ui
  *
- * @projectDescription  Stapes.js Widget FrameworkEJF is a single namespaced, module pattern oriented functions collection for frontend development.
+ * @projectDescription  Stapes.js Widget Framework
  * @author              Marco Solazzi
  * @license             MIT
  */
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['stapes', 'jquery'], factory);
+        define(['stapes'], factory);
     } else if (typeof exports === 'object') {
         // Node. Does not work with strict CommonJS, but
         // only CommonJS-like environments that support module.exports,
         // like Node.
-        module.exports = factory(require('stapes'), require('jquery') || {});
+        module.exports = factory(require('stapes'));
     } else {
         // Browser globals (root is window)
-        root.Stapes.Ui = factory(root.Stapes, (root.jQuery || root.Zepto || root.ender || root.$));
+        root.Stapes.Ui = factory(root.Stapes);
     }
-}(this, function (Stapes, $) {
+}(this, function (Stapes) {
 /**
  * Stapes UI Core
  *
@@ -104,11 +104,6 @@ _.each = function (array, fn) {
 
 
 /**
- * DOM Library reference
- */
-_Ui.$ = $;
-
-/**
  * Unique ID pointer
  *
  * @type {Integer}
@@ -147,7 +142,7 @@ _Ui.vent = Stapes.mixinEvents();
  * Logging method. May be override in production
  */
 _Ui.log = function () {
-    _log.apply( console, arguments );
+    _log.apply(console, arguments);
 };
 
 /**
@@ -192,6 +187,106 @@ _Ui.addInitializer = function (selector, fn) {
     _Ui.vent.on('bootstrap', callback);
 };
 /**
+ * Stapes UI Minimal DOM Library
+ *
+ * @author Marco Solazzi
+ * @copyright (c) Marco Solazzi
+ */
+
+/*global _Ui:true, _:true */
+
+var _arrayProto = Array.prototype;
+
+_Ui.Dom = function (selector, context) {
+    var ctx = context || document,
+        els;
+
+
+    if (!(this instanceof _Ui.Dom)) {
+        return new _Ui.Dom(selector, ctx);
+    }
+
+    //this is by design
+    if (selector !== null && selector !== undefined) {
+        if (typeof selector === 'string') {
+            els = Array.prototype.slice.call(ctx.querySelectorAll(selector));
+        } else if (Array.isArray(selector)) {
+            els = selector;
+        } else if (selector.length) {
+            //array-like object
+            els = Array.prototype.slice.call(selector);
+        } else if (selector.nodeType === 1 || selector.nodeType === 9) {
+            //wrap everything else
+            els = [selector];
+        }
+    } else {
+        els = [];
+    }
+
+    this.length = els.length;
+
+    _.extend(this, els);
+
+    return this;
+};
+
+_Ui.Dom.parseJSON = function(data) {
+    return JSON.parse(data + '');
+};
+
+_.extend(_Ui.Dom.prototype, {
+
+    constructor: _Ui.Dom,
+
+    each: function (callback) {
+        _arrayProto.every.call(this, function(el, idx) {
+            return callback.call(el, idx, el) !== false;
+        });
+        return this;
+    },
+
+    // @see https://github.com/jquery/jquery/blob/master/src/core.js#L52
+    get: function (num) {
+        if (num !== null && num !== undefined) {
+            return num < 0 ? this[num + this.length] : this[num];
+        }
+        return _arrayProto.slice.call(this);
+    },
+
+    filter: function (callback) {
+        var ret = _arrayProto.filter.call(this, function (el, i) {
+            return callback.call(el, i, el);
+        });
+        return _Ui.Dom(ret);
+    },
+
+    text: function (value) {
+        if (value === undefined) {
+            return this.length > 0 ? this[0].textContent : '';
+        }
+        return this.each(function (i, el) {
+            if (el.nodeType === 1 || el.nodeType === 11 || el.nodeType === 9) {
+                el.textContent = value;
+            }
+        });
+    },
+    html: function (value) {
+        if (value !== undefined) {
+            return this.length > 0 ? this[0].innerHTML : '';
+        }
+        return this.each(function (i, el) {
+            el.innerHTML = value;
+        });
+    }
+});
+
+
+/**
+ * DOM Library reference
+ */
+_Ui.$ = _Ui.Dom;
+
+/**
  * Stapes UI Modules' Sandbox
  *
  * @author Marco Solazzi
@@ -202,7 +297,15 @@ _Ui.addInitializer = function (selector, fn) {
 
 var _regxpKey = /([a-z]+)\s?:/ig,
 	_regxpValue = /\'/g,
+	_regxpDataAttr = /([A-Z])/g,
 	_regxpMid = /\-+/;
+
+/**
+ * Parses data attributes to POJO
+ *
+ * @param el
+ * @private
+ */
 
 /**
  * Modules container (sandbox).
@@ -231,6 +334,7 @@ _Ui.Sandbox = Stapes.subclass(
         //sandbox root element
         //initialized on start
         this.$root = null;
+        this.root = null;
 
         return this;
     },
@@ -240,43 +344,34 @@ _Ui.Sandbox = Stapes.subclass(
      *
      * @param {String} mid  Module ID string
      * @param {Object} moduleRegObj Module Registration object
-     * @param {jQuery} $el jQuery-like instance of DOM element to scan
+     * @param {Element} el DOM element to scan
      * @return {Object}
      * @private
      */
-    _parseConfig: function (mid, moduleRegObj, $el) {
+    _parseConfig: function (mid, moduleRegObj, el) {
 
 
-        var elData;
-        var data;
-        var proto = moduleRegObj.prototype;
-
-        //legacy configuration setup
-        //TODO: remove this
-
-        var conf = $el.data('sui-' + mid + '-conf') || {};
-
-        if (_.typeOf(conf) === 'string') {
-            //maybe a JSON-like with single quotes...
-            //try to cast to JSON
-            //fallback to empty object on failure
-            conf = conf.replace(_regxpKey, '"$1":').replace(_regxpValue, '"');
-            conf = _Ui.$.parseJSON(conf) || {};
-        }
+        var data,
+            proto = moduleRegObj.prototype,
+            conf = {};
 
         //new configuration setup
         if (proto.hasOwnProperty('_options') && _.isPlainObject(proto._options)) {
-            elData = $el.data();
+            //elData = $el.data();
             _.forOwn(proto._options, function (key) {
-                var dataKey = mid + key.charAt(0).toUpperCase() + key.substr(1);
-                if (elData.hasOwnProperty(dataKey)) {
-                    conf[key] = elData[dataKey];
+                var dataKey = mid + key.charAt(0).toUpperCase() + key.substr(1),
+                    dataAttr = 'data-' + dataKey.replace(_regxpDataAttr, function (match) {
+                        return '-' + match.toLowerCase();
+                    }),
+                    attrValue = el.getAttribute(dataAttr);
+
+                if (el.getAttribute(dataAttr)) {
+                    conf[key] = attrValue;
                 }
             });
         }
-
         //getting initial data
-        data = $el.data(mid + '-data') || {};
+        data = el.getAttribute('data-' + mid + '-data') || {};
         if (_.typeOf(data) === 'string') {
             //maybe a JSON-like with single quotes...
             //try to cast to JSON
@@ -284,9 +379,7 @@ _Ui.Sandbox = Stapes.subclass(
             data = data.replace(_regxpKey, '"$1":').replace(_regxpValue, '"');
             data = _Ui.$.parseJSON(data) || {};
         }
-        if (!conf.data) {
-            conf.data = data;
-        }
+        conf.data = data;
 
         return conf;
 
@@ -369,43 +462,39 @@ _Ui.Sandbox = Stapes.subclass(
      */
     start: function (root) {
 
-        var $root,
+        var rootEl,
             sandbox = this;
 
-        $root = this.$root = _Ui.$(root || document);
+        this.$root = _Ui.$(root || document);
+
+        rootEl = this.root = this.$root[0];
 
         //before starting a sandbox, ensure it's stopped
         this.stop();
 
         this.each(function (moduleRegObj, mid) {
-            var $els,
-                els,
-                instances = moduleRegObj._instances;
+            var instances = moduleRegObj._instances;
             if (moduleRegObj.active === true || !moduleRegObj.selector) {
                 return;
             }
 
-            $els = $root.find(moduleRegObj.selector);
+            _Ui.$(moduleRegObj.selector, rootEl).filter(function (i, el) {
+                return !(el.hasAttribute('data-sui-skip') || el.hasAttribute('data-sui-active'));
+            }).each(function (i, el) {
 
-            if ($els && $els.length > 0) {
-                els = $els.not('[data-sui-skip],[data-sui-active]').get();
+                var conf = sandbox._parseConfig(mid, moduleRegObj.callback, el),
+                    inst;
 
-                _.each(els, function (el) {
+                conf.el = el;
 
-                    var $el = _Ui.$(el),
-                        conf = sandbox._parseConfig(mid, moduleRegObj.callback, $el),
-                        inst;
+                inst = new moduleRegObj.callback(conf, sandbox).render();
 
-                    conf.$el = $el;
+                el.setAttribute('data-sui-active', 'true');
 
-                    inst = new moduleRegObj.callback(conf, sandbox).render();
+                instances.push(inst);
 
-                    $el.data('sui-' + mid, inst).attr('data-sui-active', true);
+            });
 
-                    instances.push(inst);
-
-                });
-            }
             moduleRegObj.active = true;
             this._updateModule(mid, moduleRegObj);
         });
@@ -428,6 +517,7 @@ _Ui.Sandbox = Stapes.subclass(
             wasActive = true;
             while (moduleRegObj._instances.length) {
                 inst = moduleRegObj._instances.pop();
+                inst.el.removeAttribute('data-sui-active');
                 if (_.typeOf(inst.destroy) === 'function') {
                     inst.destroy.call(inst);
                 }
@@ -454,7 +544,7 @@ _Ui.Sandbox.legacySelector = false;
 /*global _Ui, _silentEvents, _, _noop */
 
 //This properties are taken from passed in options and copied as instance properties
-var _baseProps = ['$el', 'tagName', 'className'];
+var _baseProps = ['$el', 'el', 'tagName', 'className'];
 
 /**
  * Base Module Constructor
@@ -493,10 +583,18 @@ _Ui.Module = Stapes.subclass(
         /**
          * Root element tagName.
          *
-         * Used when `options.replace === true`
+         * Used when `options.replace === true` or when `el` is not provided
          * @type {String}
          */
         tagName: 'div',
+
+        /**
+         * Root element className.
+         *
+         * Used when `options.replace === true` or when `el` is not provided
+         * @type {String}
+         */
+        className: '',
 
         /**
          * Copies some options to the object instance
@@ -514,18 +612,37 @@ _Ui.Module = Stapes.subclass(
         /**
          * Replaces root element with a new one
          *
-         * This method is invoked by the constructor if `options.remove === true`
+         * This method is invoked by the constructor if `options.replace === true`.
          *
          * New element will be created on following template `<{tagName} class="{className}"></div>`
          *
+         * @private
          */
         _replaceEl: function () {
-            var $newEl = _Ui.$(document.createElement(this.tagName))
-                .addClass(this.className || '');
+            var newEl = document.createElement(this.tagName),
+                el = this.el,
+                parent = el.parentNode;
 
-            this.$el.replaceWith($newEl);
+            newEl.className = this.className || '';
+            parent.replaceChild(newEl, el);
+            this.el = newEl;
+            this.$el = _Ui.$(newEl);
 
-            this.$el = $newEl;
+        },
+
+        /**
+         * Creates a root element
+         *
+         * New element will be created on following template `<{tagName} class="{className}"></div>`
+         *
+         * @private
+         */
+        _createEl: function () {
+            var newEl = document.createElement(this.tagName);
+
+            newEl.className = this.className || '';
+            this.el = newEl;
+            this.$el = _Ui.$(newEl);
         },
 
 
@@ -546,14 +663,23 @@ _Ui.Module = Stapes.subclass(
 
             this.set(_.extend({}, this._data, this.options.data || {}), _silentEvents);
 
-            if (this.options.replace === true) {
-                //whether the original element should be replaced with a custom one
-                this._replaceEl();
-            } else {
+
+            if (this.el) {
+                this.$el = _Ui.$(this.el);
+                this.el = this.$el[0];
+            } else if (this.$el) {
                 //normalize `el` and `$el` references
                 this.$el = this.$el instanceof _Ui.$ ? this.$el : _Ui.$(this.$el);
                 this.el = this.$el[0];
+            } else {
+                this._createEl();
             }
+
+            if (this.options.replace === true) {
+                //whether the original element should be replaced with a custom one
+                this._replaceEl();
+            }
+
             if (sandbox && sandbox instanceof _Ui.Sandbox) {
                 this.broadcast = sandbox.emit.bind(sandbox);
                 this.onBroadcast = sandbox.on.bind(sandbox);

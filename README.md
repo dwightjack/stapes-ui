@@ -4,7 +4,11 @@ Stapes UI is a lightweight User Interface library built on top of [Stapes.js](ht
 
 ##Overview
 
-Stapes UI requires [Stapes.js](https://github.com/hay/stapes) and [jQuery](http://jquery.com/) (or a jQuery-ish DOM library like [Zepto](http://zeptojs.com/)). It can be consumed as a classical global object or as an AMD / CommonJS module.
+Stapes UI requires [Stapes.js](https://github.com/hay/stapes). It can be consumed as a classical global object or as an AMD / CommonJS module.
+
+Since it relies on some modern features (like `document.querySelectorAll`), legacy browsers such as IE 8 and below are not currently supported.
+ 
+To support legacy browsers you have to use a supporting DOM library like jQuery 1.x (see _Using a custom DOM Library_ below).
 
 ##Installation
 
@@ -15,18 +19,15 @@ You may download the latest build or install it with bower (this will install St
 Then reference the library and its dependencies in your HTML:
 
 	<script src="/bower_components/stapes/stapes.js"></script>
-	<script src="/bower_components/jquery/dist/jquery.js"></script>
 	<script src="/bower_components/stapes-ui/dist/stapes-ui.js"></script>
 
+###Using a custom DOM Library
 
-_**Note:** Since jQuery is not a strict dependency, you need to install it separately or use a jQuery compatible library like Zepto._
+Stapes UI doesn't rely on any DOM library, anyway you may use jQuery or a jQuery compatible library by referencing its constructor function to `Stapes.Ui.$`:
 
-###Using a different DOM Library
-
-In all environments Stapes UI will try to use jQuery as default DOM library. You may use a different library by either aliasing it as `'jquery'` (in Browserify or AMD) or by manually setting it in Stapes UI:
-  
-	//Use Zepto as default DOM library
-	Stapes.Ui.$ = Zepto;
+ 
+	//Use jQuery 1.x as default DOM library
+	Stapes.Ui.$ = jQuery;
   
 
 ##Library Overview
@@ -77,9 +78,7 @@ While initializers are a nifty feature, you may need more structured components 
 
 ###Modules
 
-A *Module* in Stapes UI is a UI component, like an image gallery or a content slider. Since there're no different interfaces for model and view (like in Backbone) everything reside on a single object. While this might look _dirty_ to some, it's a convenient setup for small UIs.
-
-Here is an example:
+A *Module* in Stapes UI is a UI component, like an image gallery or a content slider. Here is an example:
 
 
 	<div class="test-module"></div>
@@ -87,15 +86,18 @@ Here is an example:
 	<script>
 		var TestModule = Stapes.Ui.Module.subclass({
 			render: function () {
-				this.$el
-				.css('color', this.options.color)
-				.text('Hi' + this.get('name'));
+				var el = this.el;
+                
+				el.style.color = this.options.color;
+				el.textContent = 'Hi ' + this.get('name');
+				
+				//always return `this` for chaining
 				return this;
 			}
 		});
 
 		var testModuleInstance = new TestModule({
-			$el: '.test-module',
+			el: '.test-module',
 			color: 'blue',
 			data: {
 				name: 'John'
@@ -107,7 +109,67 @@ Here is an example:
 
 The module instance will attach itself to the `.test-module` element and will fill the text with the given data.
 
-_**Note:** `$el` parameter could be either a CSS string selector, a jQuery like object or a DOMElement node or collection (for instance a `document.querySelector` call result)._
+
+####Module default options
+
+Even if you may provide any number of options to a module constructor, some options are used internally and thus promoted to _first class options_:
+
+* `el` {String|NodeList|DOMElement} either a CSS string selector, an array-like object or a DOMElement node or collection (for instance a `document.querySelector` call result).
+* `$el` {jQuery-like} jQuery-like object, automatically generated from `el` and used internally as reference.
+* `data` {Object} data payload object parsed as [Stapes data](http://hay.github.io/stapes/#m-set). Defaults to `{}`.
+* `replace`: {Boolean} replaces the `el` root element with a newly generated element with a template `<{tagName} class="{className}"></div>`. Defaults to `false`.
+* `tagName`: {String} Tag name used for generated root element whenever `replace` is `true` or `el` is not provided. Defaults to `'div'`.
+* `className`: {String} Class attribute value used for generated root element whenever `replace` is `true` or `el` is not provided. Defaults to `''`.
+
+####Module default methods
+
+Two commonly used methods may be provided to extend `Stapes.Ui.Module`:
+
+* `initialize`: will be called on each module instantiation.
+* `render`: a function invoked _on demand_ responsible for DOM manipulations and interface rendering.
+
+	
+####Example usage
+
+Here is a complete example:
+
+	<ul id="user-list"></ul>
+	<script>
+		var User = Stapes.Ui.Module.subclass({
+			tagName: 'li'
+    		
+    		className: 'user-list__item',
+    		
+    		initialize: function () {
+    			//ensure name is a string
+    			this.set('name', this.get('name') || '');
+    		},
+    		
+    		render: function () {
+    			this.el.innerHTML = this.get('name');
+    			return this;
+    		}
+    	});
+    	
+    	var userList = document.getElementById('user-list');
+    	
+    	var els = ['John', 'Jane'].forEach(function (username) {
+    		var user = new User({
+    			data: {
+    				name: username
+    			}
+    		});
+    		userList.appendChild(user.render().el);
+    	});
+	</script>
+	
+HTML output will be:
+
+	<ul id="user-list">
+		<li class="user-list__item">John</li>
+		<li class="user-list__item">Jane</li>
+	</ul>
+
 
 ###Sandboxes
 
@@ -159,8 +221,6 @@ While setting the `data-sui-module` is the default behaviour for module-DOM matc
 
 	</script>
 
-**NOTE:** as of 0.0.3 the default behaviour for module-DOM matching was `.module-name` (class selector). Matching by `data-sui-module` enforces style-behaviour separation**
-
 ###Module defaults and inline configurations
 
 As you may notice there's no way to pass custom data nor options to modules' instances when using sandboxes.
@@ -204,5 +264,7 @@ When registered in a sandobox a module can communicate with the parent sandbox b
 * `offBroadcast`: removes a listener for a sandbox's event ([signature doc](http://hay.github.io/stapes/#m-off))
 
 ###Release History
+
+* 0.2.0 Removed jQuery dependency. `el` promoted to _first class_ parameter. Better module documentation 
 
 * 0.1.0 Refining performances, docs and *In-sandbox* messaging

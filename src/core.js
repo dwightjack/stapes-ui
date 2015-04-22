@@ -83,11 +83,6 @@ _.each = function (array, fn) {
 
 
 /**
- * DOM Library reference
- */
-_Ui.$ = $;
-
-/**
  * Unique ID pointer
  *
  * @type {Integer}
@@ -126,7 +121,7 @@ _Ui.vent = Stapes.mixinEvents();
  * Logging method. May be override in production
  */
 _Ui.log = function () {
-    _log.apply( console, arguments );
+    _log.apply(console, arguments);
 };
 
 /**
