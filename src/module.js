@@ -47,10 +47,18 @@ _Ui.Module = Stapes.subclass(
         /**
          * Root element tagName.
          *
-         * Used when `options.replace === true`
+         * Used when `options.replace === true` or when `el` is not provided
          * @type {String}
          */
         tagName: 'div',
+
+        /**
+         * Root element className.
+         *
+         * Used when `options.replace === true` or when `el` is not provided
+         * @type {String}
+         */
+        className: '',
 
         /**
          * Copies some options to the object instance
@@ -68,7 +76,7 @@ _Ui.Module = Stapes.subclass(
         /**
          * Replaces root element with a new one
          *
-         * This method is invoked by the constructor if `options.remove === true`.
+         * This method is invoked by the constructor if `options.replace === true`.
          *
          * New element will be created on following template `<{tagName} class="{className}"></div>`
          *
@@ -122,10 +130,11 @@ _Ui.Module = Stapes.subclass(
 
             if (this.el) {
                 this.$el = _Ui.$(this.el);
+                this.el = this.$el[0];
             } else if (this.$el) {
+                //normalize `el` and `$el` references
                 this.$el = this.$el instanceof _Ui.$ ? this.$el : _Ui.$(this.$el);
                 this.el = this.$el[0];
-                //normalize `el` and `$el` references
             } else {
                 this._createEl();
             }

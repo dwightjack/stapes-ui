@@ -83,11 +83,6 @@ _.each = function (array, fn) {
 
 
 /**
- * DOM Library reference
- */
-_Ui.$ = $;
-
-/**
  * Unique ID pointer
  *
  * @type {Integer}

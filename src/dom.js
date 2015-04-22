@@ -92,6 +92,8 @@ _.extend(_Ui.Dom.prototype, {
     }
 });
 
-if (typeof _Ui.$ === 'undefined') {
-    _Ui.$ = _Ui.Dom;
-}
+
+/**
+ * DOM Library reference
+ */
+_Ui.$ = _Ui.Dom;

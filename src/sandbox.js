@@ -46,6 +46,7 @@ _Ui.Sandbox = Stapes.subclass(
         //sandbox root element
         //initialized on start
         this.$root = null;
+        this.root = null;
 
         return this;
     },

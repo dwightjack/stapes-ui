@@ -1,24 +1,24 @@
 /**
  * Stapes Ui
  *
- * @projectDescription  Stapes.js Widget FrameworkEJF is a single namespaced, module pattern oriented functions collection for frontend development.
+ * @projectDescription  Stapes.js Widget Framework
  * @author              Marco Solazzi
  * @license             MIT
  */
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['stapes', 'jquery'], factory);
+        define(['stapes'], factory);
     } else if (typeof exports === 'object') {
         // Node. Does not work with strict CommonJS, but
         // only CommonJS-like environments that support module.exports,
         // like Node.
-        module.exports = factory(require('stapes'), require('jquery') || {});
+        module.exports = factory(require('stapes'));
     } else {
         // Browser globals (root is window)
-        root.Stapes.Ui = factory(root.Stapes, (root.jQuery || root.Zepto || root.ender || root.$));
+        root.Stapes.Ui = factory(root.Stapes);
     }
-}(this, function (Stapes, $) {
+}(this, function (Stapes) {
 /**
  * Stapes UI Core
  *
@@ -102,11 +102,6 @@ _.each = function (array, fn) {
     }
 };
 
-
-/**
- * DOM Library reference
- */
-_Ui.$ = $;
 
 /**
  * Unique ID pointer
@@ -285,9 +280,12 @@ _.extend(_Ui.Dom.prototype, {
     }
 });
 
-//if (typeof _Ui.$ === 'undefined') {
-    _Ui.$ = _Ui.Dom;
-//}
+
+/**
+ * DOM Library reference
+ */
+_Ui.$ = _Ui.Dom;
+
 /**
  * Stapes UI Modules' Sandbox
  *
@@ -336,6 +334,7 @@ _Ui.Sandbox = Stapes.subclass(
         //sandbox root element
         //initialized on start
         this.$root = null;
+        this.root = null;
 
         return this;
     },
@@ -584,10 +583,18 @@ _Ui.Module = Stapes.subclass(
         /**
          * Root element tagName.
          *
-         * Used when `options.replace === true`
+         * Used when `options.replace === true` or when `el` is not provided
          * @type {String}
          */
         tagName: 'div',
+
+        /**
+         * Root element className.
+         *
+         * Used when `options.replace === true` or when `el` is not provided
+         * @type {String}
+         */
+        className: '',
 
         /**
          * Copies some options to the object instance
@@ -605,7 +612,7 @@ _Ui.Module = Stapes.subclass(
         /**
          * Replaces root element with a new one
          *
-         * This method is invoked by the constructor if `options.remove === true`.
+         * This method is invoked by the constructor if `options.replace === true`.
          *
          * New element will be created on following template `<{tagName} class="{className}"></div>`
          *
@@ -659,10 +666,11 @@ _Ui.Module = Stapes.subclass(
 
             if (this.el) {
                 this.$el = _Ui.$(this.el);
+                this.el = this.$el[0];
             } else if (this.$el) {
+                //normalize `el` and `$el` references
                 this.$el = this.$el instanceof _Ui.$ ? this.$el : _Ui.$(this.$el);
                 this.el = this.$el[0];
-                //normalize `el` and `$el` references
             } else {
                 this._createEl();
             }

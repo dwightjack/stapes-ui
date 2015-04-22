@@ -1,18 +1,22 @@
-/*global describe, expect, it, jasmine, loadFixtures, beforeEach, spyOn */
+/*global describe, expect, it, jasmine, beforeEach, afterEach, spyOn */
 
 describe('UI Sandbox', function () {
 
 	var sandbox;
 
-	beforeEach(function () {
-		loadFixtures('sandbox.html');
+    beforeEach(function () {
+        document.body.innerHTML = window.__html__['test/fixtures/sandbox.html'];
+        sandbox = new Stapes.Ui.Sandbox();
+    });
 
-		sandbox = new Stapes.Ui.Sandbox();
-	});
+    afterEach(function () {
+        document.body.innerHTML = '';
+    });
 
 	it('should have a $root and a id property', function() {
 
 		expect(sandbox.$root).toBeDefined();
+		expect(sandbox.root).toBeDefined();
 		expect(sandbox.id).toBeDefined();
 	});
 
@@ -73,7 +77,7 @@ describe('UI Sandbox', function () {
 		var callArgs2 = sandbox.set.calls.argsFor(1);
 
 		expect(callArgs2[1].selector).toBe('[data-sui-module="testModule2"]');
-		expect(callArgs2[1].callback).toEqual(jasmine.any(Function));
+        expect(callArgs2[1].callback).toEqual(jasmine.any(Function));
 		expect(callArgs2[1].active).toBe(false);
 	});
 
@@ -166,7 +170,7 @@ describe('UI Sandbox', function () {
 	it('should attach to DOM elements, render and add control attributes', function () {
 		var module1 = Stapes.Ui.Module.subclass({
 			render: function () {
-				this.$el.text('works!');
+				this.el.innerHTML = 'works!';
 				return this;
 			}
 		});
@@ -175,11 +179,11 @@ describe('UI Sandbox', function () {
 		sandbox.start();
 
 		//$root defaults to document
-		expect(sandbox.$root).toBeMatchedBy(document);
+		expect(sandbox.root).toBe(document);
 
 		//module is activated
-		expect($('[data-sui-module="module1"]')).toHaveText('works!');
-		expect($('[data-sui-module="module1"]')).toHaveAttr('data-sui-active', 'true');
+		expect(document.querySelector('[data-sui-module="module1"]').innerHTML).toBe('works!');
+		expect(document.querySelector('[data-sui-module="module1"]').getAttribute('data-sui-active')).toBe('true');
 	});
 
 	it('should read custom module configuration from DOM', function () {
@@ -191,7 +195,7 @@ describe('UI Sandbox', function () {
                 'name': 'John'
             },
 			render: function () {
-				this.$el.text(this.options.count + ' ' + this.get('name'));
+				this.el.textContent = this.options.count + ' ' + this.get('name');
 				return this;
 			}
 		});
@@ -199,8 +203,8 @@ describe('UI Sandbox', function () {
 		sandbox.register('moduleconf', moduleconf);
 		sandbox.start();
 
-		expect($('#moduleconf1')).toHaveText('1 John');
-        expect($('#moduleconf3')).toHaveText('3 Jane');
+		expect(document.getElementById('moduleconf1').textContent).toBe('1 John');
+        expect(document.getElementById('moduleconf3').textContent).toBe('3 Jane');
 	});
 
 	it('should skip DOM elements with data-sui-skip or data-sui-active attribute', function() {
@@ -220,7 +224,7 @@ describe('UI Sandbox', function () {
 
 		var regObj = sandbox.get('module2');
 
-		expect(sandbox.$root).toBeMatchedBy('#childSandbox');
+		expect(sandbox.root).toBe(document.getElementById('childSandbox'));
 		expect(regObj._instances.length).toBe(1);
 
 	});
