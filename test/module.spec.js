@@ -31,12 +31,12 @@ describe('Base Module', function () {
     });
 
     it('should attach itself to a DOM element', function () {
-        var $base = $('#base-module');
+        var $base = Stapes.Ui.$('#base-module');
         var modInst = new Stapes.Ui.Module({
             $el: $base
         });
 
-        expect(modInst.$el).toBe($base);
+        expect(modInst.$el instanceof Stapes.Ui.$).toBe(true);
         expect(modInst.el).toBe($base[0]);
 
     });

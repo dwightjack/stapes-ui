@@ -9,7 +9,15 @@
 
 var _regxpKey = /([a-z]+)\s?:/ig,
 	_regxpValue = /\'/g,
+	_regxpDataAttr = /([A-Z])/g,
 	_regxpMid = /\-+/;
+
+/**
+ * Parses data attributes to POJO
+ *
+ * @param el
+ * @private
+ */
 
 /**
  * Modules container (sandbox).
@@ -47,43 +55,34 @@ _Ui.Sandbox = Stapes.subclass(
      *
      * @param {String} mid  Module ID string
      * @param {Object} moduleRegObj Module Registration object
-     * @param {jQuery} $el jQuery-like instance of DOM element to scan
+     * @param {Element} el DOM element to scan
      * @return {Object}
      * @private
      */
-    _parseConfig: function (mid, moduleRegObj, $el) {
+    _parseConfig: function (mid, moduleRegObj, el) {
 
 
-        var elData;
-        var data;
-        var proto = moduleRegObj.prototype;
-
-        //legacy configuration setup
-        //TODO: remove this
-
-        var conf = $el.data('sui-' + mid + '-conf') || {};
-
-        if (_.typeOf(conf) === 'string') {
-            //maybe a JSON-like with single quotes...
-            //try to cast to JSON
-            //fallback to empty object on failure
-            conf = conf.replace(_regxpKey, '"$1":').replace(_regxpValue, '"');
-            conf = _Ui.$.parseJSON(conf) || {};
-        }
+        var data,
+            proto = moduleRegObj.prototype,
+            conf = {};
 
         //new configuration setup
         if (proto.hasOwnProperty('_options') && _.isPlainObject(proto._options)) {
-            elData = $el.data();
+            //elData = $el.data();
             _.forOwn(proto._options, function (key) {
-                var dataKey = mid + key.charAt(0).toUpperCase() + key.substr(1);
-                if (elData.hasOwnProperty(dataKey)) {
-                    conf[key] = elData[dataKey];
+                var dataKey = mid + key.charAt(0).toUpperCase() + key.substr(1),
+                    dataAttr = 'data-' + dataKey.replace(_regxpDataAttr, function (match) {
+                        return '-' + match.toLowerCase();
+                    }),
+                    attrValue = el.getAttribute(dataAttr);
+
+                if (el.getAttribute(dataAttr)) {
+                    conf[key] = attrValue;
                 }
             });
         }
-
         //getting initial data
-        data = $el.data(mid + '-data') || {};
+        data = el.getAttribute('data-' + mid + '-data') || {};
         if (_.typeOf(data) === 'string') {
             //maybe a JSON-like with single quotes...
             //try to cast to JSON
@@ -91,9 +90,7 @@ _Ui.Sandbox = Stapes.subclass(
             data = data.replace(_regxpKey, '"$1":').replace(_regxpValue, '"');
             data = _Ui.$.parseJSON(data) || {};
         }
-        if (!conf.data) {
-            conf.data = data;
-        }
+        conf.data = data;
 
         return conf;
 
@@ -176,43 +173,39 @@ _Ui.Sandbox = Stapes.subclass(
      */
     start: function (root) {
 
-        var $root,
+        var rootEl,
             sandbox = this;
 
-        $root = this.$root = _Ui.$(root || document);
+        this.$root = _Ui.$(root || document);
+
+        rootEl = this.root = this.$root[0];
 
         //before starting a sandbox, ensure it's stopped
         this.stop();
 
         this.each(function (moduleRegObj, mid) {
-            var $els,
-                els,
-                instances = moduleRegObj._instances;
+            var instances = moduleRegObj._instances;
             if (moduleRegObj.active === true || !moduleRegObj.selector) {
                 return;
             }
 
-            $els = $root.find(moduleRegObj.selector);
+            _Ui.$(moduleRegObj.selector, rootEl).filter(function (i, el) {
+                return !(el.hasAttribute('data-sui-skip') || el.hasAttribute('data-sui-active'));
+            }).each(function (i, el) {
 
-            if ($els && $els.length > 0) {
-                els = $els.not('[data-sui-skip],[data-sui-active]').get();
+                var conf = sandbox._parseConfig(mid, moduleRegObj.callback, el),
+                    inst;
 
-                _.each(els, function (el) {
+                conf.el = el;
 
-                    var $el = _Ui.$(el),
-                        conf = sandbox._parseConfig(mid, moduleRegObj.callback, $el),
-                        inst;
+                inst = new moduleRegObj.callback(conf, sandbox).render();
 
-                    conf.$el = $el;
+                el.setAttribute('data-sui-active', 'true');
 
-                    inst = new moduleRegObj.callback(conf, sandbox).render();
+                instances.push(inst);
 
-                    $el.data('sui-' + mid, inst).attr('data-sui-active', true);
+            });
 
-                    instances.push(inst);
-
-                });
-            }
             moduleRegObj.active = true;
             this._updateModule(mid, moduleRegObj);
         });
@@ -235,6 +228,7 @@ _Ui.Sandbox = Stapes.subclass(
             wasActive = true;
             while (moduleRegObj._instances.length) {
                 inst = moduleRegObj._instances.pop();
+                inst.el.removeAttribute('data-sui-active');
                 if (_.typeOf(inst.destroy) === 'function') {
                     inst.destroy.call(inst);
                 }

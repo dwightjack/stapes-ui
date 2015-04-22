@@ -180,9 +180,6 @@ describe('UI Sandbox', function () {
 		//module is activated
 		expect($('[data-sui-module="module1"]')).toHaveText('works!');
 		expect($('[data-sui-module="module1"]')).toHaveAttr('data-sui-active', 'true');
-		expect($('[data-sui-module="module1"]')).toHaveData('sui-module1');
-
-
 	});
 
 	it('should read custom module configuration from DOM', function () {
@@ -203,7 +200,6 @@ describe('UI Sandbox', function () {
 		sandbox.start();
 
 		expect($('#moduleconf1')).toHaveText('1 John');
-        expect($('#moduleconf2')).toHaveText('2 Jane');
         expect($('#moduleconf3')).toHaveText('3 Jane');
 	});
 

@@ -5,5 +5,5 @@
     "disallowSpacesInAnonymousFunctionExpression": null,
     "disallowSpacesInFunctionExpression": null,
 	"disallowMultipleLineBreaks": null,
-    "excludeFiles": ["node_modules/**", "bower_components/**"]
+    "excludeFiles": ["node_modules/**", "bower_components/**", "test/**/*.spec.js"]
 }
