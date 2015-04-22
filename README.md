@@ -221,8 +221,6 @@ While setting the `data-sui-module` is the default behaviour for module-DOM matc
 
 	</script>
 
-**NOTE:** as of 0.0.3 the default behaviour for module-DOM matching was `.module-name` (class selector). Matching by `data-sui-module` enforces style-behaviour separation**
-
 ###Module defaults and inline configurations
 
 As you may notice there's no way to pass custom data nor options to modules' instances when using sandboxes.
