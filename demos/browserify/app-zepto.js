@@ -1,8 +1,6 @@
 var Ui = require('./../../dist/stapes-ui');
 
 
-console.log(Ui.$.fn.jquery);
-
 //use zepto
 Ui.$ = global.Zepto;
 
@@ -17,7 +15,7 @@ var MyMod = Ui.Module.subclass({
 });
 
 new MyMod({
-    $el: Ui.$('#test-block'),
+    el: '#test-block',
     color: 'blue',
     data: {
         name: 'John'

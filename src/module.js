@@ -8,7 +8,7 @@
 /*global _Ui, _silentEvents, _, _noop */
 
 //This properties are taken from passed in options and copied as instance properties
-var _baseProps = ['$el', 'tagName', 'className'];
+var _baseProps = ['$el', 'el', 'tagName', 'className'];
 
 /**
  * Base Module Constructor
@@ -47,10 +47,18 @@ _Ui.Module = Stapes.subclass(
         /**
          * Root element tagName.
          *
-         * Used when `options.replace === true`
+         * Used when `options.replace === true` or when `el` is not provided
          * @type {String}
          */
         tagName: 'div',
+
+        /**
+         * Root element className.
+         *
+         * Used when `options.replace === true` or when `el` is not provided
+         * @type {String}
+         */
+        className: '',
 
         /**
          * Copies some options to the object instance
@@ -68,18 +76,37 @@ _Ui.Module = Stapes.subclass(
         /**
          * Replaces root element with a new one
          *
-         * This method is invoked by the constructor if `options.remove === true`
+         * This method is invoked by the constructor if `options.replace === true`.
          *
          * New element will be created on following template `<{tagName} class="{className}"></div>`
          *
+         * @private
          */
         _replaceEl: function () {
-            var $newEl = _Ui.$(document.createElement(this.tagName))
-                .addClass(this.className || '');
+            var newEl = document.createElement(this.tagName),
+                el = this.el,
+                parent = el.parentNode;
 
-            this.$el.replaceWith($newEl);
+            newEl.className = this.className || '';
+            parent.replaceChild(newEl, el);
+            this.el = newEl;
+            this.$el = _Ui.$(newEl);
 
-            this.$el = $newEl;
+        },
+
+        /**
+         * Creates a root element
+         *
+         * New element will be created on following template `<{tagName} class="{className}"></div>`
+         *
+         * @private
+         */
+        _createEl: function () {
+            var newEl = document.createElement(this.tagName);
+
+            newEl.className = this.className || '';
+            this.el = newEl;
+            this.$el = _Ui.$(newEl);
         },
 
 
@@ -100,14 +127,23 @@ _Ui.Module = Stapes.subclass(
 
             this.set(_.extend({}, this._data, this.options.data || {}), _silentEvents);
 
-            if (this.options.replace === true) {
-                //whether the original element should be replaced with a custom one
-                this._replaceEl();
-            } else {
+
+            if (this.el) {
+                this.$el = _Ui.$(this.el);
+                this.el = this.$el[0];
+            } else if (this.$el) {
                 //normalize `el` and `$el` references
                 this.$el = this.$el instanceof _Ui.$ ? this.$el : _Ui.$(this.$el);
                 this.el = this.$el[0];
+            } else {
+                this._createEl();
             }
+
+            if (this.options.replace === true) {
+                //whether the original element should be replaced with a custom one
+                this._replaceEl();
+            }
+
             if (sandbox && sandbox instanceof _Ui.Sandbox) {
                 this.broadcast = sandbox.emit.bind(sandbox);
                 this.onBroadcast = sandbox.on.bind(sandbox);

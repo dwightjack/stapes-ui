@@ -50,7 +50,7 @@ gulp.task('jshint', function () {
 });
 
 gulp.task('scripts', ['clean'], function() {
-    return gulp.src(['src/intro.js', 'src/core.js', 'src/sandbox.js', 'src/module.js', 'src/outro.js'])
+    return gulp.src(['src/intro.js', 'src/core.js', 'src/dom.js', 'src/sandbox.js', 'src/module.js', 'src/outro.js'])
         .pipe($.concat('stapes-ui.js'))
         .pipe(gulp.dest('dist'))
         .pipe($.uglify({ preserveComments: 'some'}))
