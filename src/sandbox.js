@@ -41,7 +41,7 @@ _Ui.Sandbox = Stapes.subclass(
             this.register.apply(this, arguments);
         }
         //set a unique id
-        this.id = 'sui-sbox-' + (++Stapes.Ui.uid);
+        this.id = 'sui-sbox-' + (++_Ui.uid);
 
         //sandbox root element
         //initialized on start
