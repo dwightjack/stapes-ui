@@ -77,7 +77,13 @@ _Ui.Sandbox = Stapes.subclass(
                     }),
                     attrValue = el.getAttribute(dataAttr);
 
-                if (el.getAttribute(dataAttr)) {
+                if (attrValue) {
+                    //try to cast integers and booleans...
+                    if (_.isNumeric(attrValue)) {
+                        attrValue = parseFloat(attrValue);
+                    } else if (attrValue === 'true' || attrValue === 'false') {
+                        attrValue = (attrValue === 'true');
+                    }
                     conf[key] = attrValue;
                 }
             });
