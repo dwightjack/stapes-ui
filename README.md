@@ -265,6 +265,8 @@ When registered in a sandobox a module can communicate with the parent sandbox b
 
 ###Release History
 
+* 0.2.3 Maintenance release 
+ 
 * 0.2.0 Removed jQuery dependency. `el` promoted to _first class_ parameter. Better module documentation 
 
 * 0.1.0 Refining performances, docs and *In-sandbox* messaging

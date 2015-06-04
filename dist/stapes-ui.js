@@ -102,6 +102,22 @@ _.each = function (array, fn) {
     }
 };
 
+//https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Objets_globaux/Array/isArray
+_.isArray = Array.isArray || function(arg) {
+    return Object.prototype.toString.call(arg) === '[object Array]';
+};
+
+
+//https://github.com/jquery/jquery/blob/master/src/core.js#L206
+_.isNumeric = function( obj ) {
+    // parseFloat NaNs numeric-cast false positives (null|true|false|"")
+    // ...but misinterprets leading-number strings, particularly hex literals ("0x...")
+    // subtraction forces infinities to NaN
+    // adding 1 corrects loss of precision from parseFloat (#15100)
+    return !_.isArray( obj ) && (obj - parseFloat( obj ) + 1) >= 0;
+};
+
+
 
 /**
  * Unique ID pointer
@@ -365,7 +381,13 @@ _Ui.Sandbox = Stapes.subclass(
                     }),
                     attrValue = el.getAttribute(dataAttr);
 
-                if (el.getAttribute(dataAttr)) {
+                if (attrValue) {
+                    //try to cast integers and booleans...
+                    if (_.isNumeric(attrValue)) {
+                        attrValue = parseFloat(attrValue);
+                    } else if (attrValue === 'true' || attrValue === 'false') {
+                        attrValue = (attrValue === 'true');
+                    }
                     conf[key] = attrValue;
                 }
             });
@@ -751,8 +773,9 @@ _Ui.Module.subclass = function (obj, classOnly) {
     if (obj && !obj.hasOwnProperty('constructor')) {
         obj.constructor = _Ui.Module.prototype.constructor;
     }
-    return _subclass.call(this, obj, classOnly);
-
+    var sub = _subclass.call(this, obj, classOnly);
+    sub.subclass = _Ui.Module.subclass.bind(sub);
+    return sub;
 };
 // Just return a value to define the module export.
 // This example returns an object, but the module

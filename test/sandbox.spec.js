@@ -189,13 +189,16 @@ describe('UI Sandbox', function () {
 	it('should read custom module configuration from DOM', function () {
 		var moduleconf = Stapes.Ui.Module.subclass({
 			_options: {
-				count: 1
+				count: 1,
+                prop: false
 			},
             _data: {
                 'name': 'John'
             },
 			render: function () {
 				this.el.textContent = this.options.count + ' ' + this.get('name');
+                expect(this.options.count).toMatch(/\d{1,}/);
+                expect(typeof this.options.prop).toBe('boolean');
 				return this;
 			}
 		});
