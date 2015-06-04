@@ -81,6 +81,22 @@ _.each = function (array, fn) {
     }
 };
 
+//https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Objets_globaux/Array/isArray
+_.isArray = Array.isArray || function(arg) {
+    return Object.prototype.toString.call(arg) === '[object Array]';
+};
+
+
+//https://github.com/jquery/jquery/blob/master/src/core.js#L206
+_.isNumeric = function( obj ) {
+    // parseFloat NaNs numeric-cast false positives (null|true|false|"")
+    // ...but misinterprets leading-number strings, particularly hex literals ("0x...")
+    // subtraction forces infinities to NaN
+    // adding 1 corrects loss of precision from parseFloat (#15100)
+    return !_.isArray( obj ) && (obj - parseFloat( obj ) + 1) >= 0;
+};
+
+
 
 /**
  * Unique ID pointer

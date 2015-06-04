@@ -22,6 +22,42 @@ describe('Base Module', function () {
 
     });
 
+    it('should inherit default module constructor in deep subclass', function () {
+
+        var Animal = Stapes.Ui.Module.subclass({
+            initialize: function () {
+                this.set('what', 'animal');
+            }
+        });
+
+        var Dog = Animal.subclass({
+            initialize: function () {
+                Dog.parent.initialize.apply(this, arguments);
+                this.set('kind', 'dog');
+            }
+        });
+
+        var PoliceDog = Dog.subclass({
+            initialize: function () {
+                PoliceDog.parent.initialize.apply(this, arguments);
+                this.set('police', true);
+            }
+        });
+
+        var rex = new PoliceDog();
+
+        expect(rex.get('what')).toBe('animal');
+        expect(rex.get('kind')).toBe('dog');
+        expect(rex.get('police')).toBe(true);
+
+        var snoopy = new Dog();
+
+        expect(snoopy.get('what')).toBe('animal');
+        expect(snoopy.get('kind')).toBe('dog');
+        expect(snoopy.get('police')).toBe(null);
+
+    });
+
 
     it('should set per-instance data', function () {
 

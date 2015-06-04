@@ -215,6 +215,7 @@ _Ui.Module.subclass = function (obj, classOnly) {
     if (obj && !obj.hasOwnProperty('constructor')) {
         obj.constructor = _Ui.Module.prototype.constructor;
     }
-    return _subclass.call(this, obj, classOnly);
-
+    var sub = _subclass.call(this, obj, classOnly);
+    sub.subclass = _Ui.Module.subclass.bind(sub);
+    return sub;
 };
