@@ -267,6 +267,8 @@ When registered in a sandobox a module can communicate with the parent sandbox b
 
 ###Release History
 
+* 0.2.4 `.init` method acts as a resolved promise for initializers 
+
 * 0.2.3 Maintenance release 
  
 * 0.2.0 Removed jQuery dependency. `el` promoted to _first class_ parameter. Better module documentation 
