@@ -65,6 +65,8 @@ In the second initializer we added a _DOM filter_ which will try to match the gi
 
 On init a `bootstrap` event will be triggered on `Stapes.Ui.vent` 
 
+Note that after `Stape.Ui.init()` is executed every subsequent initializer will be executed right away.
+
 ##Global options
 
 `Stapes.Ui.Config` is an object containing the current global configuration. It might be extended at will, anyway default parameters are:

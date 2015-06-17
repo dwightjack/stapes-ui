@@ -140,6 +140,10 @@ _Ui.log = function () {
     _log.apply(console, arguments);
 };
 
+
+//private var, UI initialized flag...
+_Ui._boostrapped = false;
+
 /**
  * Runs the application.
  *
@@ -156,6 +160,8 @@ _Ui.init = function (config) {
         });
         _silentEvents = !_Ui.Config.VERBOSE;
     }
+
+    _Ui._boostrapped = true;
 
     _Ui.vent.emit('bootstrap', _Ui.Config);
 };
@@ -179,5 +185,11 @@ _Ui.addInitializer = function (selector, fn) {
         };
     }
 
-    _Ui.vent.on('bootstrap', callback);
+    if (_Ui._boostrapped) {
+        //lanch ASAP
+        callback(_Ui.Config);
+    } else {
+        _Ui.vent.on('bootstrap', callback);
+    }
+
 };
