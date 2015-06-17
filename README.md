@@ -65,6 +65,8 @@ In the second initializer we added a _DOM filter_ which will try to match the gi
 
 On init a `bootstrap` event will be triggered on `Stapes.Ui.vent` 
 
+Note that after `Stape.Ui.init()` is executed every subsequent initializer will be executed right away.
+
 ##Global options
 
 `Stapes.Ui.Config` is an object containing the current global configuration. It might be extended at will, anyway default parameters are:
@@ -264,6 +266,8 @@ When registered in a sandobox a module can communicate with the parent sandbox b
 * `offBroadcast`: removes a listener for a sandbox's event ([signature doc](http://hay.github.io/stapes/#m-off))
 
 ###Release History
+
+* 0.2.4 `.init` method acts as a resolved promise for initializers 
 
 * 0.2.3 Maintenance release 
  
